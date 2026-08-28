@@ -634,17 +634,22 @@ const NAV = [{
   label: "Clients",
   icon: Users
 }, {
-  id: "house",
-  label: "House",
-  icon: Home
-}, {
-  id: "car",
-  label: "Car",
-  icon: Car
-}, {
-  id: "personal",
-  label: "Personal",
-  icon: Wallet
+  id: "loan",
+  label: "Loan",
+  icon: Wallet,
+  children: [{
+    id: "house",
+    label: "House",
+    icon: Home
+  }, {
+    id: "car",
+    label: "Car",
+    icon: Car
+  }, {
+    id: "personal",
+    label: "Personal",
+    icon: Wallet
+  }]
 }, {
   id: "verify",
   label: "Verify",
@@ -1331,6 +1336,7 @@ function CRM() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [page, setPage] = useState("dashboard");
+  const [loanOpen, setLoanOpen] = useState(true);
   const [openId, setOpenId] = useState(null);
   const [editing, setEditing] = useState(null);
   useEffect(() => {
@@ -1484,6 +1490,47 @@ function CRM() {
     size: 22,
     color: "#fff"
   })), NAV.map(n => {
+    // 有 children 的是分组（Loan）
+    if (n.children) {
+      const Icon = n.icon;
+      const childActive = n.children.some(c => c.id === page);
+      return /*#__PURE__*/React.createElement("div", {
+        key: n.id,
+        style: { width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }
+      },
+      /*#__PURE__*/React.createElement("button", {
+        onClick: () => setLoanOpen(o => !o),
+        title: n.label,
+        style: {
+          ...S.navBtn,
+          ...(childActive && !loanOpen ? S.navActive : {})
+        }
+      }, /*#__PURE__*/React.createElement(Icon, {
+        size: 20
+      }), /*#__PURE__*/React.createElement("span", {
+        style: S.navLabel
+      }, n.label, " ", loanOpen ? "\u25B4" : "\u25BE")),
+      loanOpen && n.children.map(c => {
+        const CIcon = c.icon, cActive = page === c.id;
+        return /*#__PURE__*/React.createElement("button", {
+          key: c.id,
+          onClick: () => setPage(c.id),
+          title: c.label,
+          style: {
+            ...S.navBtn,
+            padding: "8px 0",
+            marginTop: 2,
+            width: 52,
+            ...(cActive ? S.navActive : {})
+          }
+        }, /*#__PURE__*/React.createElement(CIcon, {
+          size: 17
+        }), /*#__PURE__*/React.createElement("span", {
+          style: { ...S.navLabel, fontSize: 10 }
+        }, c.label));
+      }));
+    }
+    // 普通菜单项
     const Icon = n.icon,
       active = page === n.id;
     return /*#__PURE__*/React.createElement("button", {
@@ -1507,7 +1554,16 @@ function CRM() {
     style: S.header
   }, /*#__PURE__*/React.createElement("div", {
     style: S.pageTitle
-  }, NAV.find(n => n.id === page)?.label), /*#__PURE__*/React.createElement("div", {
+  }, (() => {
+    for (const n of NAV) {
+      if (n.id === page) return n.label;
+      if (n.children) {
+        const c = n.children.find(x => x.id === page);
+        if (c) return c.label;
+      }
+    }
+    return "";
+  })()), /*#__PURE__*/React.createElement("div", {
     style: S.headerRight
   }, dueCount > 0 && /*#__PURE__*/React.createElement("span", {
     style: S.dueBadge
@@ -2221,12 +2277,13 @@ function printVerification(v, client) {
     ${statusLine}
     ${sectionHtml}
     ${statTable}
-    <scr" + "ipt>window.onload = () => { window.print(); }</scr" + "ipt>
   </body></html>`;
   const w = window.open("", "_blank");
   if (w) {
     w.document.write(html);
     w.document.close();
+    w.focus();
+    setTimeout(() => { try { w.print(); } catch (e) {} }, 300);
   } else alert("Please allow pop-ups to export.");
 }
 function AutoText({
@@ -2501,58 +2558,68 @@ function VerifyForm({
     onSave(v);
   };
   return /*#__PURE__*/React.createElement("div", {
-    style: S.overlay,
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.panel,
-    onClick: e => e.stopPropagation()
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.panelHead
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.panelName
-  }, "New Verification"), /*#__PURE__*/React.createElement("button", {
-    style: S.iconBtn,
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement(X, {
-    size: 16
-  }))), /*#__PURE__*/React.createElement("div", {
-    style: S.panelBody
-  }, nameError && /*#__PURE__*/React.createElement("div", {
-    style: S.staffErrorMsg
-  }, "Enter a customer name (in Personal Info) before saving"), V_SECTIONS.map(sec => /*#__PURE__*/React.createElement("div", {
-    key: sec.key,
-    style: S.vSection
-  }, /*#__PURE__*/React.createElement("div", {
-    style: S.vSectionHead
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 15
-    }
-  }, sec.emoji), " ", sec.title), sec.fields.map(([field, label]) => /*#__PURE__*/React.createElement(Field, {
-    key: field,
-    label: label
-  }, /*#__PURE__*/React.createElement("input", {
-    style: {
-      ...S.input,
-      ...(nameError && field === "customerName" ? {
-        borderColor: "#dc2626",
-        background: "#fef2f2"
-      } : {})
-    },
-    value: v[field] || "",
-    onChange: e => {
-      set(field, e.target.value);
-      if (field === "customerName" && e.target.value.trim()) setNameError(false);
-    }
-  }))))), /*#__PURE__*/React.createElement("div", {
-    style: S.formActions
-  }, /*#__PURE__*/React.createElement("button", {
-    style: S.cancelBtn,
-    onClick: onClose
-  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
-    style: S.saveBtn,
-    onClick: submit
-  }, "Save to Queue")))));
+  style: S.overlay,
+  onClick: onClose
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panel,
+  onClick: e => e.stopPropagation()
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panelHead
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panelName
+}, "New Verification"), /*#__PURE__*/React.createElement("button", {
+  style: S.iconBtn,
+  onClick: onClose
+}, /*#__PURE__*/React.createElement(X, {
+  size: 16
+}))), /*#__PURE__*/React.createElement("div", {
+  style: S.panelBody
+}, nameError && /*#__PURE__*/React.createElement("div", {
+  style: S.staffErrorMsg
+}, "Enter a customer name before saving"), /*#__PURE__*/React.createElement("div", {
+  style: S.vSection
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.vSectionHead
+}, /*#__PURE__*/React.createElement("span", {
+  style: {
+    fontSize: 15
+  }
+}, "\uD83D\uDC64"), " Customer Name"), /*#__PURE__*/React.createElement(Field, {
+  label: "Customer Name / \u5BA2\u6237\u540D\u5B57"
+}, /*#__PURE__*/React.createElement("input", {
+  autoFocus: true,
+  placeholder: "Enter name…",
+  style: {
+    ...S.input,
+    ...(nameError ? {
+      borderColor: "#dc2626",
+      background: "#fef2f2"
+    } : {})
+  },
+  value: v.customerName || "",
+  onChange: e => {
+    set("customerName", e.target.value);
+    if (e.target.value.trim()) setNameError(false);
+  },
+  onKeyDown: e => {
+    if (e.key === "Enter") submit();
+  }
+})), /*#__PURE__*/React.createElement("div", {
+  style: {
+    fontSize: 12,
+    color: "#94a3b8",
+    marginTop: 8,
+    lineHeight: 1.5
+  }
+}, "\u5148\u586B\u540D\u5B57\u4FDD\u5B58\uFF0C\u4E4B\u540E\u70B9\u5F00\u4ED6\u7684\u540D\u5B57\u518D\u586B\u5176\u4F59\u8D44\u6599\u3002", /*#__PURE__*/React.createElement("br", null), "Save with just a name, then tap the name to fill in the rest."))), /*#__PURE__*/React.createElement("div", {
+  style: S.formActions
+}, /*#__PURE__*/React.createElement("button", {
+  style: S.cancelBtn,
+  onClick: onClose
+}, "Cancel"), /*#__PURE__*/React.createElement("button", {
+  style: S.saveBtn,
+  onClick: submit
+}, "Save to Queue"))));
 }
 function ClientCard({
   c,
