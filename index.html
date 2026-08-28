@@ -2278,13 +2278,34 @@ function printVerification(v, client) {
     ${sectionHtml}
     ${statTable}
   </body></html>`;
-  const w = window.open("", "_blank");
-  if (w) {
-    w.document.write(html);
-    w.document.close();
-    w.focus();
-    setTimeout(() => { try { w.print(); } catch (e) {} }, 300);
-  } else alert("Please allow pop-ups to export.");
+  // 用隐藏 iframe 在当前页打印，不开新标签页
+  const old = document.getElementById("__print_frame__");
+  if (old) old.remove();
+  const iframe = document.createElement("iframe");
+  iframe.id = "__print_frame__";
+  iframe.style.position = "fixed";
+  iframe.style.right = "0";
+  iframe.style.bottom = "0";
+  iframe.style.width = "0";
+  iframe.style.height = "0";
+  iframe.style.border = "0";
+  document.body.appendChild(iframe);
+  const doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write(html);
+  doc.close();
+  const doPrint = () => {
+    try {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    } catch (e) {}
+  };
+  if (iframe.contentWindow.document.readyState === "complete") {
+    setTimeout(doPrint, 300);
+  } else {
+    iframe.onload = () => setTimeout(doPrint, 300);
+  }
+  return;
 }
 function AutoText({
   value,
@@ -4382,10 +4403,10 @@ const S = {
   },
   vFieldRow: {
     display: "flex",
-    alignItems: "flex-start",
-    gap: 8,
-    padding: "6px 12px",
-    borderBottom: "1px solid #f4f5fb"
+    alignItems: "stretch",
+    gap: 0,
+    padding: 0,
+    borderBottom: "1px solid #e2e8f0"
   },
   vFieldChecked: {
     background: "#f0fdf4"
@@ -4393,15 +4414,19 @@ const S = {
   vFieldLabel: {
     fontSize: 13,
     color: "#64748b",
-    width: 190,
+    width: 200,
     flexShrink: 0,
-    paddingTop: 4
+    padding: "8px 12px",
+    background: "#f8fafc",
+    borderRight: "1px solid #e2e8f0",
+    display: "flex",
+    alignItems: "center"
   },
   vFieldValue: {
     fontSize: 13,
     fontWeight: 500,
     flex: 1,
-    textAlign: "right",
+    textAlign: "left",
     wordBreak: "break-word"
   },
   vFieldText: {
@@ -4409,10 +4434,10 @@ const S = {
     fontSize: 13,
     fontWeight: 600,
     color: "#1e293b",
-    textAlign: "right",
+    textAlign: "left",
     wordBreak: "break-word",
     cursor: "text",
-    padding: "3px 6px",
+    padding: "8px 12px",
     lineHeight: 1.4
   },
   vFieldEmpty: {
@@ -4424,10 +4449,10 @@ const S = {
     minWidth: 0,
     border: "1px solid transparent",
     borderRadius: 5,
-    padding: "3px 6px",
+    padding: "8px 12px",
     fontSize: 13,
     fontWeight: 600,
-    textAlign: "right",
+    textAlign: "left",
     background: "transparent",
     fontFamily: "inherit",
     color: "#1e293b",
