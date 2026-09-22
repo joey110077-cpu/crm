@@ -630,10 +630,6 @@ const NAV = [{
   label: "Dashboard",
   icon: LayoutDashboard
 }, {
-  id: "clients",
-  label: "Clients",
-  icon: Users
-}, {
   id: "loan",
   label: "Loan",
   icon: Wallet,
@@ -664,672 +660,920 @@ const money = n => n ? "RM " + Number(n).toLocaleString() : "—";
 const num = n => "RM " + Number(n || 0).toLocaleString();
 const today = () => new Date().toISOString().slice(0, 10);
 const DATA_VERSION = "2026-08-v10";
-const SEED = [{
-  "name": "SONG SUAN WAH",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bc68rj",
-    "type": "house",
-    "amount": "310000",
-    "subject": "VISTA IMPIANAN",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "CANDY",
-    "lawyer": "EUGUGE",
-    "supplies": "ANDY",
-    "date": "15-May",
-    "approved": "328100",
-    "lucasCost": "255000",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "approved",
-      "officer": "",
-      "amount": "310000"
-    }],
+const SEED = [
+  {
+    "name": "SONG SUAN WAH",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "CHIN KOK PING",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bdkjh6",
-    "type": "house",
-    "amount": "378000",
-    "subject": "Sri angerrik",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "CANDY",
-    "lawyer": "EUGUGE",
-    "supplies": "ANDY",
-    "date": "27-May",
-    "approved": "420000",
-    "lucasCost": "300000",
-    "banks": [{
-      "bank": "BSN",
-      "status": "approved",
-      "officer": "",
-      "amount": "378000"
-    }],
+    "loans": [
+      {
+        "id": "ld1000",
+        "type": "house",
+        "amount": "235000",
+        "subject": "VISTA IMPIANAN",
+        "bank": "",
+        "rate": "",
+        "stage": "approved",
+        "link": "https://drive.google.com/drive/folders/1Tu6P8KcCQT1qUw6NkVeEksBYN8iaHwqK",
+        "agent": "CANDY",
+        "lawyer": "EUGUGE",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "15-May",
+        "approved": "328100",
+        "lucasCost": "255000",
+        "banks": [
+          {
+            "bank": "B.RAKYAT",
+            "status": "approved",
+            "officer": "",
+            "amount": "310000"
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "CHIN KOK PING",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "WONG WAI GIAT",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2be1xdy",
-    "type": "house",
-    "amount": "198000",
-    "subject": "HARMONI DAMNSARA DAMAI",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "CANDY",
-    "lawyer": "EUGUGE",
-    "supplies": "ANDY",
-    "date": "28-May",
-    "approved": "220000",
-    "lucasCost": "135000",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "approved",
-      "officer": "",
-      "amount": "198000"
-    }],
+    "loans": [
+      {
+        "id": "ld1001",
+        "type": "house",
+        "amount": "280000",
+        "subject": "Sri angerrik",
+        "bank": "",
+        "rate": "",
+        "stage": "approved",
+        "link": "https://drive.google.com/drive/folders/1VNcjHlYyXFoC3Kn7bklgMEgLN9kX2kWf",
+        "agent": "CANDY",
+        "lawyer": "EUGUGE",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "27-May",
+        "approved": "420000",
+        "lucasCost": "300000",
+        "banks": [
+          {
+            "bank": "BSN",
+            "status": "approved",
+            "officer": "",
+            "amount": "378000"
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "WONG WAI GIAT",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "LAU CHUAN FEI",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bfuwu0",
-    "type": "house",
-    "amount": "400000",
-    "subject": "SRI PENAGA",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "CANDY",
-    "lawyer": "EUGUGE",
-    "supplies": "ANDY",
-    "date": "13-July",
-    "approved": "436053",
-    "lucasCost": "300000",
-    "banks": [{
-      "bank": "BSN",
-      "status": "approved",
-      "officer": "",
-      "amount": "400000"
-    }],
+    "loans": [
+      {
+        "id": "ld1002",
+        "type": "house",
+        "amount": "120000",
+        "subject": "HARMONI DAMNSARA DAMAI",
+        "bank": "",
+        "rate": "",
+        "stage": "approved",
+        "link": "https://drive.google.com/drive/folders/1edDTgbq_nEtEHctkc115Qka03_z41pvc",
+        "agent": "CANDY",
+        "lawyer": "EUGUGE",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "28-May",
+        "approved": "220000",
+        "lucasCost": "135000",
+        "banks": [
+          {
+            "bank": "MUAMALAT",
+            "status": "approved",
+            "officer": "",
+            "amount": "198000"
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "LAU CHUAN FEI",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "YONG JOYLN",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bg0y6s",
-    "type": "house",
-    "amount": "270000",
-    "subject": "Sri Ria Apartments",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "VICK",
-    "lawyer": "",
-    "supplies": "ANDY",
-    "date": "13-July",
-    "approved": "",
-    "lucasCost": "300000",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "submitted",
-      "officer": "YONG",
-      "amount": ""
-    }, {
-      "bank": "BSN",
-      "status": "rejected",
-      "officer": ""
-    }, {
-      "bank": "Muamalat",
-      "status": "submitted",
-      "officer": "YONG",
-      "amount": ""
-    }, {
-      "bank": "Alrajhi",
-      "status": "submitted",
-      "officer": "YONG",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1003",
+        "type": "house",
+        "amount": "270000",
+        "subject": "SRI PENAGA",
+        "bank": "",
+        "rate": "",
+        "stage": "approved",
+        "link": "https://drive.google.com/drive/folders/1YY66Smuf1XZB5I68g3f31ClYSIioEFMk",
+        "agent": "CANDY",
+        "lawyer": "EUGUGE",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "13-July",
+        "approved": "436053",
+        "lucasCost": "300000",
+        "banks": [
+          {
+            "bank": "PBB",
+            "status": "approved",
+            "officer": "",
+            "amount": "400000"
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "LAU CHUAN FEI",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "CHIA AI CHEN",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bh1nd6",
-    "type": "house",
-    "amount": "225000",
-    "subject": "VENICE HILL CHERAS",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "RICHARD",
-    "lawyer": "",
-    "supplies": "KYLIE",
-    "date": "13-July",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "submitted",
-      "officer": "SIMSON",
-      "amount": ""
-    }, {
-      "bank": "BSN",
-      "status": "rejected",
-      "officer": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1004",
+        "type": "house",
+        "amount": "255000",
+        "subject": "AMAN SATU",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "CANDY",
+        "lawyer": "VIVIAN",
+        "supplies": "ALEX",
+        "banker": "",
+        "size": "837",
+        "date": "15-September",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "ALRAJHI",
+            "status": "pending",
+            "officer": "ALEX",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "YONG JOYLN",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "PANG CHUN MAN",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bim8lz",
-    "type": "house",
-    "amount": "420000",
-    "subject": "CEMPAKA",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "JESSY",
-    "lawyer": "BRYAN",
-    "supplies": "WEE PINN",
-    "date": "13-July",
-    "approved": "454051",
-    "lucasCost": "295000",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "submitted",
-      "officer": "YONG",
-      "amount": ""
-    }, {
-      "bank": "PBB",
-      "status": "rejected",
-      "officer": "ALEX"
-    }, {
-      "bank": "Muamalat",
-      "status": "approved",
-      "officer": "",
-      "amount": "420000"
-    }],
+    "loans": [
+      {
+        "id": "ld1005",
+        "type": "house",
+        "amount": "270000",
+        "subject": "Sri Ria Apartments",
+        "bank": "",
+        "rate": "",
+        "stage": "rejected",
+        "link": "",
+        "agent": "VICK",
+        "lawyer": "",
+        "supplies": "ANDY",
+        "banker": "YONG",
+        "size": "",
+        "date": "13-July",
+        "approved": "",
+        "lucasCost": "300000",
+        "banks": [
+          {
+            "bank": "BSN",
+            "status": "rejected",
+            "officer": "",
+            "amount": ""
+          },
+          {
+            "bank": "MUAMALAT",
+            "status": "rejected",
+            "officer": "YONG",
+            "amount": ""
+          },
+          {
+            "bank": "ALRAJHI",
+            "status": "pending",
+            "officer": "YONG",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "CHIA AI CHEN",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }, {
-    "id": "2bji6x5",
-    "type": "house",
-    "amount": "240000",
-    "subject": "FLORA DAMANSARA",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "JESSY",
-    "lawyer": "",
-    "supplies": "JAMES",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "BSN",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1006",
+        "type": "house",
+        "amount": "225000",
+        "subject": "FLORA DAMANSARA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "RICHARD",
+        "lawyer": "MUDZ SALAHUDDIN",
+        "supplies": "",
+        "banker": "ALEX",
+        "size": "",
+        "date": "15-September",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "PBB",
+            "status": "pending",
+            "officer": "ALEX",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "SYAMIL",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "SYAMIL",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bkq7oc",
-    "type": "house",
-    "amount": "399960",
-    "subject": "FLORA DAMANSARA",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "RICHARD",
-    "lawyer": "TEOH XIAO LING",
-    "supplies": "JAMES",
-    "date": "16-July",
-    "approved": "415410",
-    "lucasCost": "270000",
-    "banks": [{
-      "bank": "BSN",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }, {
-      "bank": "PBB",
-      "status": "approved",
-      "officer": "",
-      "amount": "399960"
-    }],
+    "loans": [
+      {
+        "id": "ld1007",
+        "type": "house",
+        "amount": "200000",
+        "subject": "FLORA DAMANSARA",
+        "bank": "",
+        "rate": "",
+        "stage": "approved",
+        "link": "https://drive.google.com/drive/folders/1RlZ-KaJGJZGUUnb36CuDkkpS-EAOHG5U",
+        "agent": "RICHARD",
+        "lawyer": "TEOH XIAO LING",
+        "supplies": "JAMES",
+        "banker": "ALEX",
+        "size": "",
+        "date": "16-July",
+        "approved": "415410",
+        "lucasCost": "270000",
+        "banks": [
+          {
+            "bank": "BSN",
+            "status": "pending",
+            "officer": "ALEX",
+            "amount": ""
+          },
+          {
+            "bank": "PBB",
+            "status": "approved",
+            "officer": "",
+            "amount": "399960"
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "SYAMIL",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }, {
-    "id": "2bl25ag",
-    "type": "house",
-    "amount": "225000",
-    "subject": "FLORA DAMANSARA",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "RICHARD",
-    "lawyer": "MUDZ SALAHUDDI",
-    "supplies": "",
-    "date": "29-July",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "BSN",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1008",
+        "type": "house",
+        "amount": "",
+        "subject": "",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "RICHARD",
+        "lawyer": "",
+        "supplies": "",
+        "banker": "",
+        "size": "",
+        "date": "29-July",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "NGAI KOK YIP",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "NGAI KOK YIP",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bm08i2",
-    "type": "house",
-    "amount": "255000",
-    "subject": "AMAN SATU",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "KELVIN",
-    "lawyer": "",
-    "supplies": "VIVIAN",
-    "date": "29-July",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "Bank Islam",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }, {
-      "bank": "Alrajhi",
-      "status": "rejected",
-      "officer": "YONG"
-    }],
+    "loans": [
+      {
+        "id": "ld1009",
+        "type": "house",
+        "amount": "",
+        "subject": "",
+        "bank": "",
+        "rate": "",
+        "stage": "rejected",
+        "link": "",
+        "agent": "KELVIN",
+        "lawyer": "",
+        "supplies": "",
+        "banker": "",
+        "size": "",
+        "date": "29-July",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "MUAMALAT",
+            "status": "rejected",
+            "officer": "ALEX",
+            "amount": ""
+          },
+          {
+            "bank": "ALRAJHI",
+            "status": "rejected",
+            "officer": "YONG",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "Navinderan A/",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "Navinderan A/",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bn8b9d",
-    "type": "house",
-    "amount": "420000",
-    "subject": "AKASIA APARMENT",
-    "bank": "",
-    "rate": "",
-    "stage": "approved",
-    "agent": "NICO",
-    "lawyer": "TEOH XIAO LING",
-    "supplies": "WEE PINN",
-    "date": "28-July",
-    "approved": "477748",
-    "lucasCost": "290000",
-    "banks": [{
-      "bank": "BSN",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }, {
-      "bank": "Muamalat",
-      "status": "approved",
-      "officer": "",
-      "amount": "420000"
-    }],
+    "loans": [
+      {
+        "id": "ld1010",
+        "type": "house",
+        "amount": "250000",
+        "subject": "AKASIA APARMENT",
+        "bank": "",
+        "rate": "",
+        "stage": "approved",
+        "link": "https://drive.google.com/drive/folders/1buOm9zUvo0WOHdmhfvYPcEtWZ730Tc6v",
+        "agent": "NICO",
+        "lawyer": "TEOH XIAO LING",
+        "supplies": "WEE PINN",
+        "banker": "ALEX",
+        "size": "750",
+        "date": "28-July",
+        "approved": "477748",
+        "lucasCost": "290000",
+        "banks": [
+          {
+            "bank": "MUAMALAT",
+            "status": "approved",
+            "officer": "",
+            "amount": "420000"
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "NG SIOK PENG",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "NG SIOK PENG",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bo9fxp",
-    "type": "house",
-    "amount": "280000",
-    "subject": "SRI DAHLIA",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "ALEX",
-    "lawyer": "",
-    "supplies": "ANDY",
-    "date": "13-August",
-    "approved": "",
-    "lucasCost": "310000",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "submitted",
-      "officer": "SIMSON",
-      "amount": ""
-    }, {
-      "bank": "Muamalat",
-      "status": "submitted",
-      "officer": "SIMSON",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1011",
+        "type": "house",
+        "amount": "280000",
+        "subject": "SRI DAHLIA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "ALEX",
+        "lawyer": "",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "13-August",
+        "approved": "",
+        "lucasCost": "310000",
+        "banks": [
+          {
+            "bank": "BANK ISLAM",
+            "status": "pending",
+            "officer": "SIMSON",
+            "amount": ""
+          },
+          {
+            "bank": "MUAMALAT",
+            "status": "pending",
+            "officer": "SIMSON",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "SITI NOOR HIDAYAH",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "SITI NOOR HIDAYAH",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bpbfuz",
-    "type": "house",
-    "amount": "720000",
-    "subject": "C2-12-1, Solaris Dutamas, 1, Jalan Dutamas 1, 50480, Kuala Lumpur",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "NICO",
-    "lawyer": "",
-    "supplies": "JAMES",
-    "date": "28-July",
-    "approved": "",
-    "lucasCost": "800000",
-    "banks": [{
-      "bank": "CIMB",
-      "status": "submitted",
-      "officer": "MICHELLE",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1012",
+        "type": "house",
+        "amount": "720000",
+        "subject": "65, lorong batu nilam 1b, Bandar bukit tinggi, 41200, klang",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "NICO",
+        "lawyer": "",
+        "supplies": "JAMES",
+        "banker": "",
+        "size": "",
+        "date": "28-July",
+        "approved": "",
+        "lucasCost": "800000",
+        "banks": [
+          {
+            "bank": "MICHELLE",
+            "status": "pending",
+            "officer": "MICHELLE",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "TAN TIAN HWA",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "TAN TIAN HWA",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bq9wfn",
-    "type": "house",
-    "amount": "275000",
-    "subject": "SRI CEMPAKA",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "ALEX",
-    "lawyer": "",
-    "supplies": "ANDY",
-    "date": "13-August",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "Bank Rakyat",
-      "status": "submitted",
-      "officer": "SIMSON",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1013",
+        "type": "house",
+        "amount": "275000",
+        "subject": "SRI CEMPAKA",
+        "bank": "",
+        "rate": "",
+        "stage": "rejected",
+        "link": "",
+        "agent": "ALEX",
+        "lawyer": "",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "13-August",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "BANK ISLAM",
+            "status": "rejected",
+            "officer": "SIMSON",
+            "amount": ""
+          },
+          {
+            "bank": "MUAMALAT",
+            "status": "pending",
+            "officer": "SIMSON",
+            "amount": ""
+          },
+          {
+            "bank": "ALRAJHI",
+            "status": "rejected",
+            "officer": "SIMSON",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "LIM KIEN KIAT",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "LIM WUAN SING",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2brby0c",
-    "type": "house",
-    "amount": "",
-    "subject": "",
-    "bank": "",
-    "rate": "",
-    "stage": "lead",
-    "agent": "EDWARD",
-    "lawyer": "",
-    "supplies": "",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [],
+    "loans": [
+      {
+        "id": "ld1014",
+        "type": "house",
+        "amount": "265000",
+        "subject": "AKASIA APARTMENT",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "ALEX",
+        "lawyer": "",
+        "supplies": "WEI PINN",
+        "banker": "ALEX",
+        "size": "750",
+        "date": "21-August",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "MUAMALAT",
+            "status": "pending",
+            "officer": "ALEX",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "YEW MENG FUNG",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "LIM KIEN KIAT",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bs6y74",
-    "type": "house",
-    "amount": "265000",
-    "subject": "AKASIA APARTMENT",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "ALEX",
-    "lawyer": "",
-    "supplies": "WEI PINN",
-    "date": "21-August",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "Muamalat",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1015",
+        "type": "house",
+        "amount": "285000",
+        "subject": "VISTA SAUJANA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "EDWARD",
+        "lawyer": "",
+        "supplies": "ANDY",
+        "banker": "SIMSON",
+        "size": "",
+        "date": "",
+        "approved": "",
+        "lucasCost": "320000",
+        "banks": [],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "YEW MENG FUNG",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "YEW MENG FUNG",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bttqwo",
-    "type": "house",
-    "amount": "335000",
-    "subject": "",
-    "bank": "",
-    "rate": "",
-    "stage": "lead",
-    "agent": "EDWARD",
-    "lawyer": "",
-    "supplies": "",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [],
+    "loans": [
+      {
+        "id": "ld1016",
+        "type": "house",
+        "amount": "",
+        "subject": "",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "",
+        "lawyer": "",
+        "supplies": "",
+        "banker": "",
+        "size": "",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "CHONG LEONG HONG",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "CHONG LEONG HONG",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bu17cu",
-    "type": "house",
-    "amount": "",
-    "subject": "PELANGI DAMANSARA",
-    "bank": "",
-    "rate": "",
-    "stage": "pending",
-    "agent": "EDWARD",
-    "lawyer": "",
-    "supplies": "WEI PINN",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [{
-      "bank": "BSN",
-      "status": "submitted",
-      "officer": "ALEX",
-      "amount": ""
-    }],
+    "loans": [
+      {
+        "id": "ld1017",
+        "type": "house",
+        "amount": "335000",
+        "subject": "",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "EDWARD",
+        "lawyer": "",
+        "supplies": "",
+        "banker": "",
+        "size": "",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "SAM WAI CHONE",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "SAM WAI CHONE",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bvg1t9",
-    "type": "house",
-    "amount": "",
-    "subject": "",
-    "bank": "",
-    "rate": "",
-    "stage": "lead",
-    "agent": "CANDY",
-    "lawyer": "",
-    "supplies": "",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [],
+    "loans": [
+      {
+        "id": "ld1018",
+        "type": "house",
+        "amount": "240000",
+        "subject": "FLORA DAMANSARA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "CANDY",
+        "lawyer": "",
+        "supplies": "WEI PINN",
+        "banker": "EDWIN",
+        "size": "750",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "MUAMALAT",
+            "status": "pending",
+            "officer": "EDWIN",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "ROBERT BERWICK",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "ROBERT BERWICK",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bwsi8g",
-    "type": "house",
-    "amount": "",
-    "subject": "",
-    "bank": "",
-    "rate": "",
-    "stage": "lead",
-    "agent": "EDWARD",
-    "lawyer": "",
-    "supplies": "",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [],
+    "loans": [
+      {
+        "id": "ld1019",
+        "type": "house",
+        "amount": "290000",
+        "subject": "PELANGI DAMANSARA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "EDWARD",
+        "lawyer": "",
+        "supplies": "WEI PINN",
+        "banker": "EDWIN",
+        "size": "750",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "BANK ISLAM",
+            "status": "pending",
+            "officer": "EDWIN",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "WONG PHEI CHUAN",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}, {
-  "name": "CHIA KEE CHEIR",
-  "phone": "",
-  "ic": "",
-  "job": "",
-  "income": "",
-  "note": "",
-  "loans": [{
-    "id": "2bxbt4y",
-    "type": "house",
-    "amount": "",
-    "subject": "",
-    "bank": "",
-    "rate": "",
-    "stage": "lead",
-    "agent": "",
-    "lawyer": "",
-    "supplies": "",
-    "date": "",
-    "approved": "",
-    "lucasCost": "",
-    "banks": [],
+    "loans": [
+      {
+        "id": "ld1020",
+        "type": "house",
+        "amount": "263000",
+        "subject": "CEMPAKA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "ALEX",
+        "lawyer": "",
+        "supplies": "WEE PINN",
+        "banker": "ALEX",
+        "size": "730",
+        "date": "21-September",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "BANK ISLAM",
+            "status": "pending",
+            "officer": "ALEX",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "GAN BOON YIK",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
     "note": "",
-    "followUps": []
-  }]
-}];
+    "loans": [
+      {
+        "id": "ld1021",
+        "type": "house",
+        "amount": "",
+        "subject": "",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "BR",
+        "lawyer": "",
+        "supplies": "",
+        "banker": "",
+        "size": "",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "WONG YEW LAI",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
+    "note": "",
+    "loans": [
+      {
+        "id": "ld1022",
+        "type": "house",
+        "amount": "",
+        "subject": "",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "BR",
+        "lawyer": "",
+        "supplies": "",
+        "banker": "",
+        "size": "",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  },
+  {
+    "name": "NABILAH",
+    "phone": "",
+    "ic": "",
+    "job": "",
+    "income": "",
+    "note": "",
+    "loans": [
+      {
+        "id": "ld1023",
+        "type": "house",
+        "amount": "240000",
+        "subject": "FLORA DAMANSARA",
+        "bank": "",
+        "rate": "",
+        "stage": "pending",
+        "link": "",
+        "agent": "NICO",
+        "lawyer": "",
+        "supplies": "JAMES",
+        "banker": "EDWIN",
+        "size": "850",
+        "date": "",
+        "approved": "",
+        "lucasCost": "",
+        "banks": [
+          {
+            "bank": "ALRAJHI",
+            "status": "pending",
+            "officer": "EDWIN",
+            "amount": ""
+          }
+        ],
+        "note": "",
+        "followUps": []
+      }
+    ]
+  }
+];
 function CRM() {
   const [clients, setClients] = useState([]);
   const [verifications, setVerifications] = useState([]);
@@ -1753,33 +1997,174 @@ function ClientsPage({
   onOpen
 }) {
   const [q, setQ] = useState("");
-  const filtered = clients.filter(c => {
+  const rows = clients.flatMap(c => (c.loans || []).length ? (c.loans || []).map(l => ({
+    loan: l,
+    client: c
+  })) : [{
+    loan: {
+      id: "noloan-" + c.id,
+      type: "house",
+      stage: "new",
+      banks: []
+    },
+    client: c
+  }]).filter(r => {
     if (!q) return true;
     const s = q.toLowerCase();
-    return [c.name, c.phone, ...(c.loans || []).map(l => l.bank)].filter(Boolean).join(" ").toLowerCase().includes(s);
+    return [r.client.name, r.client.phone, r.loan.bank, r.loan.subject, r.loan.agent].filter(Boolean).join(" ").toLowerCase().includes(s);
   });
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    style: S.searchWrap
-  }, /*#__PURE__*/React.createElement(Search, {
-    size: 16,
-    color: "#94a3b8"
-  }), /*#__PURE__*/React.createElement("input", {
-    style: S.search,
-    placeholder: "Search name / phone / bank",
-    value: q,
-    onChange: e => setQ(e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
-    style: S.list
-  }, filtered.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
-    text: clients.length === 0 ? "No clients yet — tap New Client" : "No matching clients"
-  }) : filtered.map(c => /*#__PURE__*/React.createElement(ClientCard, {
-    key: c.id,
-    c: c,
+  style: S.searchWrap
+}, /*#__PURE__*/React.createElement(Search, {
+  size: 16,
+  color: "#94a3b8"
+}), /*#__PURE__*/React.createElement("input", {
+  style: S.search,
+  placeholder: "Search name / phone / bank",
+  value: q,
+  onChange: e => setQ(e.target.value)
+})), /*#__PURE__*/React.createElement("div", {
+  style: S.tableWrap
+}, rows.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
+  text: clients.length === 0 ? "No clients yet — tap New Client" : "No matching clients"
+}) : /*#__PURE__*/React.createElement("table", {
+  style: S.dataTable
+}, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thSticky
+  }
+}, "Customer"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Type"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Link"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Agent"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Date"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Lawyer"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Supplies"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Banker"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Project"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Size"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Cost"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Lucas Cost"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Approved"), BANK_COLS.map(bk => /*#__PURE__*/React.createElement("th", {
+  key: bk,
+  style: S.th
+}, bk)), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Stage"))), /*#__PURE__*/React.createElement("tbody", null, rows.map(r => {
+  const l = r.loan,
+    c = r.client,
+    st = stageOf(l.stage),
+    ty = typeOf(l.type);
+  const bankMap = {};
+  (l.banks || []).forEach(b => {
+    bankMap[(b.bank || "").toUpperCase()] = b;
+  });
+  return /*#__PURE__*/React.createElement("tr", {
+    key: l.id,
+    style: S.tr,
     onClick: () => onOpen(c.id)
-  }))));
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdName,
+      ...S.tdSticky
+    }
+  }, c.name), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, ty.short), /*#__PURE__*/React.createElement("td", {
+    style: S.td,
+    onClick: e => e.stopPropagation()
+  }, l.link ? /*#__PURE__*/React.createElement("a", {
+    href: l.link,
+    target: "_blank",
+    rel: "noopener",
+    style: S.linkCell
+  }, "Open") : ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.agent || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.date || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.lawyer || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.supplies || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.banker || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.subject || ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.size || ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.amount ? money(l.amount) : ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.lucasCost ? money(l.lucasCost) : ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.approved ? money(l.approved) : ""), BANK_COLS.map(bk => {
+    const b = bankMap[bk];
+    if (!b) return /*#__PURE__*/React.createElement("td", {
+      key: bk,
+      style: S.td
+    });
+    const isRej = b.status === "rejected";
+    const disp = b.amount ? money(b.amount) : b.officer || (isRej ? "REJECT" : "");
+    return /*#__PURE__*/React.createElement("td", {
+      key: bk,
+      style: {
+        ...S.td,
+        ...(isRej ? S.cellReject : b.amount ? S.cellApproved : {})
+      }
+    }, isRej && b.officer ? "REJECT " + b.officer : disp);
+  }), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...S.stageTag,
+      background: st.color + "1a",
+      color: st.color
+    }
+  }, st.label)));
+})))));
 }
 
 /* ---------- Type page ---------- */
+const BANK_COLS = ["B.RAKYAT","BSN","PBB","MUAMALAT","BANK ISLAM","ALRAJHI","MBSB","RHB","CIMB","MICHELLE"];
 function TypePage({
   type,
   clients,
@@ -1798,49 +2183,172 @@ function TypePage({
   });
   const total = rows.reduce((s, r) => s + Number(r.loan.amount || 0), 0);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  style: {
+    ...S.typeBanner,
+    background: t.color + "10",
+    borderColor: t.color + "30"
+  }
+}, /*#__PURE__*/React.createElement(t.icon, {
+  size: 20,
+  color: t.color
+}), /*#__PURE__*/React.createElement("span", null, rows.length, " ", t.label.toLowerCase(), "s · Total ", num(total))), /*#__PURE__*/React.createElement("div", {
+  style: S.searchWrap
+}, /*#__PURE__*/React.createElement(Search, {
+  size: 16,
+  color: "#94a3b8"
+}), /*#__PURE__*/React.createElement("input", {
+  style: S.search,
+  placeholder: "Search name / bank / subject",
+  value: q,
+  onChange: e => setQ(e.target.value)
+})), /*#__PURE__*/React.createElement("div", {
+  style: S.filters
+}, /*#__PURE__*/React.createElement(Chip, {
+  active: stageFilter === "all",
+  onClick: () => setStageFilter("all"),
+  label: "All Stages"
+}), STAGES.map(s => {
+  const n = clients.flatMap(c => c.loans || []).filter(l => l.type === type && l.stage === s.id).length;
+  return /*#__PURE__*/React.createElement(Chip, {
+    key: s.id,
+    active: stageFilter === s.id,
+    onClick: () => setStageFilter(s.id),
+    label: s.label + " " + n,
+    color: s.color
+  });
+})), /*#__PURE__*/React.createElement("div", {
+  style: S.tableWrap
+}, rows.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
+  text: "No records"
+}) : /*#__PURE__*/React.createElement("table", {
+  style: S.dataTable
+}, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thSticky
+  }
+}, "Customer"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Link"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Agent"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Date"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Lawyer"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Supplies"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Banker"), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Project"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Size"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Cost"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Lucas Cost"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
+    ...S.thNum
+  }
+}, "Approved"), BANK_COLS.map(bk => /*#__PURE__*/React.createElement("th", {
+  key: bk,
+  style: S.th
+}, bk)), /*#__PURE__*/React.createElement("th", {
+  style: S.th
+}, "Stage"))), /*#__PURE__*/React.createElement("tbody", null, rows.map(r => {
+  const l = r.loan,
+    c = r.client,
+    st = stageOf(l.stage);
+  const bankMap = {};
+  (l.banks || []).forEach(b => {
+    bankMap[(b.bank || "").toUpperCase()] = b;
+  });
+  return /*#__PURE__*/React.createElement("tr", {
+    key: l.id,
+    style: S.tr,
+    onClick: () => onOpen(c.id)
+  }, /*#__PURE__*/React.createElement("td", {
     style: {
-      ...S.typeBanner,
-      background: t.color + "10",
-      borderColor: t.color + "30"
+      ...S.td,
+      ...S.tdName,
+      ...S.tdSticky
     }
-  }, /*#__PURE__*/React.createElement(t.icon, {
-    size: 20,
-    color: t.color
-  }), /*#__PURE__*/React.createElement("span", null, rows.length, " ", t.label.toLowerCase(), "s · Total ", num(total))), /*#__PURE__*/React.createElement("div", {
-    style: S.searchWrap
-  }, /*#__PURE__*/React.createElement(Search, {
-    size: 16,
-    color: "#94a3b8"
-  }), /*#__PURE__*/React.createElement("input", {
-    style: S.search,
-    placeholder: "Search name / bank / subject",
-    value: q,
-    onChange: e => setQ(e.target.value)
-  })), /*#__PURE__*/React.createElement("div", {
-    style: S.filters
-  }, /*#__PURE__*/React.createElement(Chip, {
-    active: stageFilter === "all",
-    onClick: () => setStageFilter("all"),
-    label: "All Stages"
-  }), STAGES.map(s => {
-    const n = clients.flatMap(c => c.loans || []).filter(l => l.type === type && l.stage === s.id).length;
-    return /*#__PURE__*/React.createElement(Chip, {
-      key: s.id,
-      active: stageFilter === s.id,
-      onClick: () => setStageFilter(s.id),
-      label: `${s.label} ${n}`,
-      color: s.color
+  }, c.name), /*#__PURE__*/React.createElement("td", {
+    style: S.td,
+    onClick: e => e.stopPropagation()
+  }, l.link ? /*#__PURE__*/React.createElement("a", {
+    href: l.link,
+    target: "_blank",
+    rel: "noopener",
+    style: S.linkCell
+  }, "Open") : ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.agent || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.date || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.lawyer || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.supplies || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.banker || ""), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, l.subject || ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.size || ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.amount ? money(l.amount) : ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.lucasCost ? money(l.lucasCost) : ""), /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNum
+    }
+  }, l.approved ? money(l.approved) : ""), BANK_COLS.map(bk => {
+    const b = bankMap[bk];
+    if (!b) return /*#__PURE__*/React.createElement("td", {
+      key: bk,
+      style: S.td
     });
-  })), /*#__PURE__*/React.createElement("div", {
-    style: S.list
-  }, rows.length === 0 ? /*#__PURE__*/React.createElement(Empty, {
-    text: "No records"
-  }) : rows.map(r => /*#__PURE__*/React.createElement(LoanRow, {
-    key: r.loan.id,
-    loan: r.loan,
-    client: r.client,
-    onClick: () => onOpen(r.client.id)
-  }))));
+    const isRej = b.status === "rejected";
+    const disp = b.amount ? money(b.amount) : b.officer || (isRej ? "REJECT" : "");
+    return /*#__PURE__*/React.createElement("td", {
+      key: bk,
+      style: {
+        ...S.td,
+        ...(isRej ? S.cellReject : b.amount ? S.cellApproved : {})
+      }
+    }, isRej && b.officer ? "REJECT " + b.officer : disp);
+  }), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      ...S.stageTag,
+      background: st.color + "1a",
+      color: st.color
+    }
+  }, st.label)));
+})))));
 }
 function LoanRow({
   loan,
@@ -3711,8 +4219,8 @@ const S = {
   },
   content: {
     padding: 28,
-    maxWidth: 1100,
-    margin: "0 auto"
+    maxWidth: "100%",
+    margin: 0
   },
   importBanner: {
     display: "flex",
@@ -3942,6 +4450,86 @@ const S = {
     padding: "3px 10px",
     borderRadius: 6,
     whiteSpace: "nowrap"
+  },
+  tableWrap: {
+    overflowX: "auto",
+    border: "1px solid #e2e8f0",
+    borderRadius: 10,
+    background: "#fff"
+  },
+  dataTable: {
+    borderCollapse: "collapse",
+    width: "100%",
+    fontSize: 13
+  },
+  th: {
+    textAlign: "left",
+    padding: "10px 12px",
+    background: "#1e293b",
+    color: "#fff",
+    fontWeight: 600,
+    fontSize: 12,
+    whiteSpace: "nowrap"
+  },
+  thNum: {
+    textAlign: "right"
+  },
+  thSticky: {
+    position: "sticky",
+    left: 0,
+    zIndex: 2,
+    background: "#1e293b"
+  },
+  tr: {
+    cursor: "pointer",
+    borderTop: "1px solid #eef1f6"
+  },
+  td: {
+    padding: "9px 12px",
+    color: "#334155",
+    whiteSpace: "nowrap",
+    verticalAlign: "middle",
+    background: "#fff"
+  },
+  tdName: {
+    fontWeight: 700,
+    color: "#0f172a"
+  },
+  tdSticky: {
+    position: "sticky",
+    left: 0,
+    zIndex: 1,
+    boxShadow: "2px 0 4px -2px rgba(0,0,0,0.08)"
+  },
+  tdNum: {
+    textAlign: "right",
+    fontVariantNumeric: "tabular-nums"
+  },
+  bankPill: {
+    display: "inline-block",
+    fontSize: 11,
+    fontWeight: 600,
+    padding: "2px 7px",
+    borderRadius: 5,
+    marginRight: 4,
+    marginBottom: 2,
+    whiteSpace: "nowrap"
+  },
+  linkCell: {
+    color: "#4f46e5",
+    textDecoration: "underline",
+    fontWeight: 600,
+    fontSize: 12
+  },
+  cellReject: {
+    background: "#fee2e2",
+    color: "#b91c1c",
+    fontWeight: 600
+  },
+  cellApproved: {
+    background: "#dcfce7",
+    color: "#15803d",
+    fontWeight: 600
   },
   empty: {
     textAlign: "center",
