@@ -1780,6 +1780,7 @@ function CRM({ onLogout }) {
   const [page, setPage] = useState("dashboard");
   const [loanOpen, setLoanOpen] = useState(true);
   const [openId, setOpenId] = useState(null);
+  const [showDue, setShowDue] = useState(false);
   const [editing, setEditing] = useState(null);
   useEffect(() => {
     (async () => {
@@ -2008,7 +2009,9 @@ function CRM({ onLogout }) {
   })()), /*#__PURE__*/React.createElement("div", {
     style: S.headerRight
   }, dueCount > 0 && /*#__PURE__*/React.createElement("span", {
-    style: S.dueBadge
+    style: { ...S.dueBadge, cursor: "pointer" },
+    onClick: () => setShowDue(true),
+    title: "View follow-ups"
   }, /*#__PURE__*/React.createElement(AlertCircle, {
     size: 14
   }), " ", dueCount, " to follow up"), /*#__PURE__*/React.createElement("span", {
@@ -2058,7 +2061,85 @@ function CRM({ onLogout }) {
     initial: editing === "new" ? null : editing,
     onClose: () => setEditing(null),
     onSave: saveClient
-  }));
+  }), showDue && /*#__PURE__*/React.createElement("div", {
+  style: S.overlay,
+  onClick: () => setShowDue(false)
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panel,
+  onClick: e => e.stopPropagation()
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panelHead
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panelName
+}, "Follow-ups / 待跟进"), /*#__PURE__*/React.createElement("button", {
+  style: S.iconBtn,
+  onClick: () => setShowDue(false)
+}, /*#__PURE__*/React.createElement(X, {
+  size: 16
+}))), /*#__PURE__*/React.createElement("div", {
+  style: S.panelBody
+}, (() => {
+  const items = [];
+  clients.forEach(c => (c.loans || []).forEach(l => (l.followUps || []).forEach(f => {
+    if (!f.done && f.date && f.date <= today()) items.push({
+      c,
+      l,
+      f
+    });
+  })));
+  if (items.length === 0) return /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: "#94a3b8",
+      textAlign: "center",
+      padding: "30px 0"
+    }
+  }, "No follow-ups due");
+  items.sort((a, b) => a.f.date < b.f.date ? -1 : 1);
+  return items.map((it, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    onClick: () => {
+      setShowDue(false);
+      setOpenId(it.c.id);
+    },
+    style: {
+      padding: "12px 14px",
+      border: "1px solid #e2e8f0",
+      borderRadius: 10,
+      marginBottom: 8,
+      cursor: "pointer",
+      background: "#fff"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700,
+      color: "#0f172a"
+    }
+  }, it.c.name), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: it.f.date < today() ? "#dc2626" : "#f59e0b",
+      fontWeight: 600
+    }
+  }, it.f.date)), it.f.note && /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#64748b",
+      marginTop: 4
+    }
+  }, it.f.note), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: "#94a3b8",
+      marginTop: 2
+    }
+  }, typeOf(it.l.type).short, it.l.subject ? " · " + it.l.subject : "")));
+})()))));
 }
 
 /* ---------- Dashboard ---------- */
