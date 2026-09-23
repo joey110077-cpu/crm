@@ -2234,6 +2234,11 @@ function ClientsPage({
 }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
   style: {
     ...S.th,
+    ...S.thNumCol
+  }
+}, "#"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
     ...S.thSticky
   }
 }, "Customer"), /*#__PURE__*/React.createElement("th", {
@@ -2277,7 +2282,7 @@ function ClientsPage({
   style: S.th
 }, bk)), /*#__PURE__*/React.createElement("th", {
   style: S.th
-}, "Stage"))), /*#__PURE__*/React.createElement("tbody", null, rows.map(r => {
+}, "Stage"))), /*#__PURE__*/React.createElement("tbody", null, rows.map((r, _i) => {
   const l = r.loan,
     c = r.client,
     st = stageOf(l.stage),
@@ -2291,6 +2296,11 @@ function ClientsPage({
     style: S.tr,
     onClick: () => onOpen(c.id)
   }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNumCol
+    }
+  }, _i + 1), /*#__PURE__*/React.createElement("td", {
     style: {
       ...S.td,
       ...S.tdName,
@@ -2427,6 +2437,11 @@ function TypePage({
 }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
   style: {
     ...S.th,
+    ...S.thNumCol
+  }
+}, "#"), /*#__PURE__*/React.createElement("th", {
+  style: {
+    ...S.th,
     ...S.thSticky
   }
 }, "Customer"), /*#__PURE__*/React.createElement("th", {
@@ -2468,7 +2483,7 @@ function TypePage({
   style: S.th
 }, bk)), /*#__PURE__*/React.createElement("th", {
   style: S.th
-}, "Stage"))), /*#__PURE__*/React.createElement("tbody", null, rows.map(r => {
+}, "Stage"))), /*#__PURE__*/React.createElement("tbody", null, rows.map((r, _i) => {
   const l = r.loan,
     c = r.client,
     st = stageOf(l.stage);
@@ -2481,6 +2496,11 @@ function TypePage({
     style: S.tr,
     onClick: () => onOpen(c.id)
   }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNumCol
+    }
+  }, _i + 1), /*#__PURE__*/React.createElement("td", {
     style: {
       ...S.td,
       ...S.tdName,
@@ -4692,6 +4712,16 @@ const S = {
     left: 0,
     zIndex: 2,
     background: "#1e293b"
+  },
+  thNumCol: {
+    width: 40,
+    textAlign: "center"
+  },
+  tdNumCol: {
+    width: 40,
+    textAlign: "center",
+    color: "#94a3b8",
+    fontWeight: 600
   },
   tr: {
     cursor: "pointer",
