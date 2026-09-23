@@ -1870,7 +1870,7 @@ function CRM({ onLogout }) {
   };
   const saveClient = c => {
     const exists = clients.some(x => x.id === c.id);
-    persist(exists ? clients.map(x => x.id === c.id ? c : x) : [c, ...clients]);
+    persist(exists ? clients.map(x => x.id === c.id ? c : x) : [...clients, c]);
     setEditing(null);
     if (!exists) setOpenId(c.id);
   };
