@@ -673,6 +673,10 @@ const NAV = [{
   id: "html",
   label: "HTML",
   icon: Folder
+}, {
+  id: "banker",
+  label: "Banker",
+  icon: Phone
 }];
 const HTML_TOOLS = [{
   name: "Application Form",
@@ -1822,6 +1826,7 @@ function App() {
 function CRM({ onLogout }) {
   const [clients, setClients] = useState([]);
   const [verifications, setVerifications] = useState([]);
+  const [bankers, setBankers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [page, setPage] = useState("dashboard");
@@ -1878,6 +1883,10 @@ function CRM({ onLogout }) {
           const vr = await DB.get("verifications");
           if (vr) setVerifications(JSON.parse(vr));
         } catch (e) {}
+        try {
+          const br = await DB.get("bankers");
+          if (br) setBankers(JSON.parse(br));
+        } catch (e) {}
       } catch (e) {
         console.error(e);
       }
@@ -1889,6 +1898,16 @@ function CRM({ onLogout }) {
     setSaving(true);
     try {
       await DB.set("verifications", JSON.stringify(next));
+    } catch (e) {
+      console.error(e);
+    }
+    setSaving(false);
+  };
+  const persistBankers = async next => {
+    setBankers(next);
+    setSaving(true);
+    try {
+      await DB.set("bankers", JSON.stringify(next));
     } catch (e) {
       console.error(e);
     }
@@ -2093,7 +2112,10 @@ function CRM({ onLogout }) {
     clients: clients,
     verifications: verifications,
     onSave: persistVerifications
-  }) : page === "html" ? /*#__PURE__*/React.createElement(HtmlToolsPage, null) : /*#__PURE__*/React.createElement(TypePage, {
+  }) : page === "html" ? /*#__PURE__*/React.createElement(HtmlToolsPage, null) : page === "banker" ? /*#__PURE__*/React.createElement(BankerPage, {
+    bankers: bankers,
+    onSave: persistBankers
+  }) : /*#__PURE__*/React.createElement(TypePage, {
     type: page,
     clients: clients,
     onOpen: setOpenId
@@ -2190,6 +2212,121 @@ function CRM({ onLogout }) {
 }
 
 /* ---------- Dashboard ---------- */
+function BankerPage({
+  bankers,
+  onSave
+}) {
+  const [q, setQ] = React.useState("");
+  const add = () => onSave([...bankers, {
+    id: uid(),
+    name: "",
+    bank: "",
+    phone: ""
+  }]);
+  const upd = (id, k, v) => onSave(bankers.map(b => b.id === id ? {
+    ...b,
+    [k]: v
+  } : b));
+  const del = id => onSave(bankers.filter(b => b.id !== id));
+  const list = bankers.filter(b => {
+    if (!q) return true;
+    const s = q.toLowerCase();
+    return [b.name, b.bank, b.phone].filter(Boolean).join(" ").toLowerCase().includes(s);
+  });
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 16,
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      ...S.searchWrap,
+      flex: 1,
+      marginBottom: 0
+    }
+  }, /*#__PURE__*/React.createElement(Search, {
+    size: 16,
+    color: "#94a3b8"
+  }), /*#__PURE__*/React.createElement("input", {
+    style: S.search,
+    placeholder: "Search name / bank / phone",
+    value: q,
+    onChange: e => setQ(e.target.value)
+  })), /*#__PURE__*/React.createElement("button", {
+    style: S.addBtn,
+    onClick: add
+  }, /*#__PURE__*/React.createElement(Plus, {
+    size: 16
+  }), " Add Banker")), /*#__PURE__*/React.createElement("div", {
+    style: S.tableWrap
+  }, /*#__PURE__*/React.createElement("table", {
+    style: S.dataTable
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", {
+    style: {
+      ...S.th,
+      ...S.thNumCol
+    }
+  }, "#"), /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Name"), /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Bank"), /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Phone"), /*#__PURE__*/React.createElement("th", {
+    style: {
+      ...S.th,
+      width: 50
+    }
+  }))), /*#__PURE__*/React.createElement("tbody", null, list.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    colSpan: 5,
+    style: {
+      ...S.td,
+      textAlign: "center",
+      color: "#94a3b8",
+      padding: "30px 0"
+    }
+  }, "No bankers yet — tap Add Banker")) : list.map((b, i) => /*#__PURE__*/React.createElement("tr", {
+    key: b.id,
+    style: S.tr
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      ...S.td,
+      ...S.tdNumCol
+    }
+  }, i + 1), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("input", {
+    style: S.bankerInput,
+    value: b.name,
+    placeholder: "Name",
+    onChange: e => upd(b.id, "name", e.target.value)
+  })), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("input", {
+    style: S.bankerInput,
+    value: b.bank,
+    placeholder: "Bank",
+    onChange: e => upd(b.id, "bank", e.target.value)
+  })), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("input", {
+    style: S.bankerInput,
+    value: b.phone,
+    placeholder: "Phone",
+    onChange: e => upd(b.id, "phone", e.target.value)
+  })), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("button", {
+    style: S.fuDel,
+    onClick: () => del(b.id),
+    title: "Delete"
+  }, /*#__PURE__*/React.createElement(Trash2, {
+    size: 15,
+    color: "#cbd5e1"
+  })))))))));
+}
 function HtmlToolsPage() {
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -5758,6 +5895,17 @@ const S = {
     cursor: "pointer",
     display: "flex",
     alignItems: "center"
+  },
+  bankerInput: {
+    width: "100%",
+    boxSizing: "border-box",
+    border: "1px solid transparent",
+    borderRadius: 6,
+    padding: "6px 8px",
+    fontSize: 13,
+    fontFamily: "inherit",
+    background: "transparent",
+    color: "#1e293b"
   },
   fuCheck: {
     background: "none",
