@@ -2387,7 +2387,7 @@ function ClientsPage({
   });
   return /*#__PURE__*/React.createElement("tr", {
     key: l.id,
-    style: S.tr,
+    style: c.flag ? { ...S.tr, background: "#fffbeb" } : S.tr,
     onClick: () => onOpen(c.id)
   }, /*#__PURE__*/React.createElement("td", {
     style: {
@@ -2395,12 +2395,17 @@ function ClientsPage({
       ...S.tdNumCol
     }
   }, _i + 1), /*#__PURE__*/React.createElement("td", {
-    style: {
+    style: c.flag ? {
+      ...S.td,
+      ...S.tdName,
+      ...S.tdSticky,
+      background: "#fffbeb"
+    } : {
       ...S.td,
       ...S.tdName,
       ...S.tdSticky
     }
-  }, c.name), /*#__PURE__*/React.createElement("td", {
+  }, c.flag ? "\u2605 " + c.name : c.name), /*#__PURE__*/React.createElement("td", {
     style: S.td
   }, ty.short), /*#__PURE__*/React.createElement("td", {
     style: S.td,
@@ -2587,7 +2592,7 @@ function TypePage({
   });
   return /*#__PURE__*/React.createElement("tr", {
     key: l.id,
-    style: S.tr,
+    style: c.flag ? { ...S.tr, background: "#fffbeb" } : S.tr,
     onClick: () => onOpen(c.id)
   }, /*#__PURE__*/React.createElement("td", {
     style: {
@@ -2595,12 +2600,17 @@ function TypePage({
       ...S.tdNumCol
     }
   }, _i + 1), /*#__PURE__*/React.createElement("td", {
-    style: {
+    style: c.flag ? {
+      ...S.td,
+      ...S.tdName,
+      ...S.tdSticky,
+      background: "#fffbeb"
+    } : {
       ...S.td,
       ...S.tdName,
       ...S.tdSticky
     }
-  }, c.name), /*#__PURE__*/React.createElement("td", {
+  }, c.flag ? "\u2605 " + c.name : c.name), /*#__PURE__*/React.createElement("td", {
     style: S.td,
     onClick: e => e.stopPropagation()
   }, l.link ? /*#__PURE__*/React.createElement("a", {
@@ -3646,6 +3656,17 @@ function Detail({
   }, client.name), /*#__PURE__*/React.createElement("div", {
     style: S.panelActions
   }, /*#__PURE__*/React.createElement("button", {
+    style: {
+      ...S.iconBtn,
+      color: client.flag ? "#f59e0b" : "#94a3b8",
+      background: client.flag ? "#fffbeb" : undefined
+    },
+    onClick: () => onUpdate({
+      ...client,
+      flag: !client.flag
+    }),
+    title: client.flag ? "\u53D6\u6D88\u6807\u8BB0" : "\u6807\u8BB0\u91CD\u8981"
+  }, client.flag ? "\u2605" : "\u2606"), /*#__PURE__*/React.createElement("button", {
     style: S.iconBtn,
     onClick: onEdit,
     title: "Edit info"
