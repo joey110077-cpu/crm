@@ -1820,10 +1820,11 @@ function App() {
     onLogin: (s, sess) => setSession(sess)
   });
   return /*#__PURE__*/React.createElement(CRM, {
-    onLogout: logout
+    onLogout: logout,
+    currentUser: session && session.user && session.user.email ? session.user.email.split("@")[0] : ""
   });
 }
-function CRM({ onLogout }) {
+function CRM({ onLogout, currentUser }) {
   const [clients, setClients] = useState([]);
   const [verifications, setVerifications] = useState([]);
   const [bankers, setBankers] = useState([]);
@@ -2125,7 +2126,8 @@ function CRM({ onLogout }) {
     onEdit: () => setEditing(open),
     onDelete: () => removeClient(open.id),
     onUpdate: updateClient,
-    onSendVerify: () => sendToVerify(open)
+    onSendVerify: () => sendToVerify(open),
+    currentUser: currentUser
   }), editing && /*#__PURE__*/React.createElement(EditForm, {
     initial: editing === "new" ? null : editing,
     onClose: () => setEditing(null),
@@ -3853,7 +3855,8 @@ function Detail({
   onEdit,
   onDelete,
   onUpdate,
-  onSendVerify
+  onSendVerify,
+  currentUser
 }) {
   const [addingLoan, setAddingLoan] = useState(false);
   const loans = client.loans || [];
@@ -4011,7 +4014,8 @@ function Detail({
     key: l.id,
     loan: l,
     onUpdate: updateLoan,
-    onRemove: () => removeLoan(l.id)
+    onRemove: () => removeLoan(l.id),
+    currentUser: currentUser
   })), addingLoan && /*#__PURE__*/React.createElement(LoanForm, {
     onSave: saveLoan,
     onCancel: () => setAddingLoan(false)
@@ -4020,7 +4024,8 @@ function Detail({
 function LoanBlock({
   loan,
   onUpdate,
-  onRemove
+  onRemove,
+  currentUser
 }) {
   const [expanded, setExpanded] = useState(true);
   const [fuText, setFuText] = useState("");
@@ -4038,7 +4043,8 @@ function LoanBlock({
         id: uid(),
         text: fuText.trim(),
         date: fuDate,
-        done: false
+        done: false,
+        by: currentUser || ""
       }, ...(loan.followUps || [])]
     });
     setFuText("");
@@ -4301,7 +4307,7 @@ function LoanBlock({
       }
     }, /*#__PURE__*/React.createElement(Clock, {
       size: 11
-    }), " ", f.date, " ", overdue && "· overdue")), /*#__PURE__*/React.createElement("button", {
+    }), " ", f.date, " ", overdue && "· overdue", f.by && " · by " + f.by)), /*#__PURE__*/React.createElement("button", {
       style: S.fuDel,
       onClick: () => delFu(f.id),
       title: "\u5220\u9664 / Delete"
