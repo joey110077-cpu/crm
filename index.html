@@ -710,6 +710,49 @@ const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 
 const money = n => n ? "RM " + Number(n).toLocaleString() : "—";
 const num = n => "RM " + Number(n || 0).toLocaleString();
 const today = () => new Date().toISOString().slice(0, 10);
+const _now = () => {
+  const d = new Date();
+  const p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+};
+const _fieldLabel = {
+  name: "Name", phone: "Phone", ic: "IC", job: "Job", income: "Income", note: "Note", flag: "Highlight",
+  amount: "Amount", subject: "Project", bank: "Bank", rate: "Rate", stage: "Stage", link: "Link",
+  agent: "Agent", lawyer: "Lawyer", supplies: "Supplies", banker: "Banker", size: "Size",
+  date: "Date", approved: "Approved", lucasCost: "Lucas Cost", type: "Type"
+};
+const _v = x => (x === undefined || x === null || x === "") ? "(empty)" : (x === true ? "Yes" : (x === false ? "No" : String(x)));
+function diffClient(oldC, newC, user) {
+  const out = [];
+  const when = _now();
+  const by = user || "someone";
+  // 客户级字段
+  ["name","phone","ic","job","income","note","flag"].forEach(k => {
+    if ((oldC[k] || "") !== (newC[k] || "") && !(k==="flag" && !oldC[k]===!newC[k])) {
+      if (String(oldC[k]||"") !== String(newC[k]||"")) out.push({ by, when, field: _fieldLabel[k]||k, from: _v(oldC[k]), to: _v(newC[k]) });
+    }
+  });
+  // 贷款
+  const oldLoans = oldC.loans || [], newLoans = newC.loans || [];
+  newLoans.forEach(nl => {
+    const ol = oldLoans.find(x => x.id === nl.id);
+    if (!ol) { out.push({ by, when, field: "Loan", from: "(none)", to: (typeOf(nl.type).short || "loan") + " added" }); return; }
+    ["amount","subject","stage","link","agent","lawyer","supplies","banker","size","date","approved","lucasCost","note"].forEach(k => {
+      if (String(ol[k]||"") !== String(nl[k]||"")) out.push({ by, when, field: _fieldLabel[k]||k, from: _v(ol[k]), to: _v(nl[k]) });
+    });
+    // 银行
+    const ob = ol.banks || [], nb = nl.banks || [];
+    nb.forEach(b => {
+      const o = ob.find(x => x.bank === b.bank);
+      if (!o) out.push({ by, when, field: "Bank " + b.bank, from: "(none)", to: (b.amount? "RM "+b.amount : (b.officer||b.status)) });
+      else if (String(o.amount||"")!==String(b.amount||"") || String(o.officer||"")!==String(b.officer||"") || (o.status||"")!==(b.status||""))
+        out.push({ by, when, field: "Bank " + b.bank, from: (o.amount?"RM "+o.amount:(o.officer||o.status||"-")), to: (b.amount?"RM "+b.amount:(b.officer||b.status||"-")) });
+    });
+    ob.forEach(b => { if (!nb.find(x=>x.bank===b.bank)) out.push({ by, when, field: "Bank " + b.bank, from: "(had)", to: "(removed)" }); });
+  });
+  oldLoans.forEach(ol => { if (!newLoans.find(x=>x.id===ol.id)) out.push({ by, when, field: "Loan", from: (typeOf(ol.type).short||"loan"), to: "(removed)" }); });
+  return out;
+}
 const DATA_VERSION = "2026-08-v10";
 const SEED = [
   {
@@ -1945,7 +1988,12 @@ function CRM({ onLogout, currentUser }) {
     persist(clients.filter(x => x.id !== id));
     setOpenId(null);
   };
-  const updateClient = c => persist(clients.map(x => x.id === c.id ? c : x));
+  const updateClient = c => {
+    const old = clients.find(x => x.id === c.id);
+    const entries = old ? diffClient(old, c, currentUser) : [];
+    const withHist = entries.length ? { ...c, history: [...entries, ...(c.history || [])].slice(0, 300) } : c;
+    persist(clients.map(x => x.id === c.id ? withHist : x));
+  };
   const importSeed = () => {
     const existing = new Set(clients.map(c => c.name));
     const toAdd = SEED.filter(c => !existing.has(c.name)).map(c => ({
@@ -3859,6 +3907,7 @@ function Detail({
   currentUser
 }) {
   const [addingLoan, setAddingLoan] = useState(false);
+  const [showHist, setShowHist] = useState(false);
   const loans = client.loans || [];
   const saveLoan = loan => {
     const exists = loans.some(l => l.id === loan.id);
@@ -3925,6 +3974,10 @@ function Detail({
     }),
     title: client.flag ? "\u53D6\u6D88\u6807\u8BB0" : "\u6807\u8BB0\u91CD\u8981"
   }, client.flag ? "\u2605" : "\u2606"), /*#__PURE__*/React.createElement("button", {
+    style: S.iconBtn,
+    onClick: () => setShowHist(true),
+    title: "\u4FEE\u6539\u5386\u53F2 / History"
+  }, "\uD83D\uDCDC"), /*#__PURE__*/React.createElement("button", {
     style: S.iconBtn,
     onClick: onEdit,
     title: "Edit info"
@@ -4019,7 +4072,56 @@ function Detail({
   })), addingLoan && /*#__PURE__*/React.createElement(LoanForm, {
     onSave: saveLoan,
     onCancel: () => setAddingLoan(false)
-  }))));
+  }), showHist && /*#__PURE__*/React.createElement("div", {
+  style: S.overlay,
+  onClick: () => setShowHist(false)
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panel,
+  onClick: e => e.stopPropagation()
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panelHead
+}, /*#__PURE__*/React.createElement("div", {
+  style: S.panelName
+}, "修改历史 / History"), /*#__PURE__*/React.createElement("button", {
+  style: S.iconBtn,
+  onClick: () => setShowHist(false)
+}, /*#__PURE__*/React.createElement(X, {
+  size: 16
+}))), /*#__PURE__*/React.createElement("div", {
+  style: S.panelBody
+}, !client.history || client.history.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  style: {
+    color: "#94a3b8",
+    textAlign: "center",
+    padding: "30px 0"
+  }
+}, "还没有修改记录 / No history yet") : client.history.map((h, i) => /*#__PURE__*/React.createElement("div", {
+  key: i,
+  style: {
+    padding: "10px 0",
+    borderBottom: "1px solid #eef2f6"
+  }
+}, /*#__PURE__*/React.createElement("div", {
+  style: {
+    fontSize: 13,
+    color: "#0f172a"
+  }
+}, /*#__PURE__*/React.createElement("b", null, h.field), ": ", /*#__PURE__*/React.createElement("span", {
+  style: {
+    color: "#94a3b8"
+  }
+}, h.from), " → ", /*#__PURE__*/React.createElement("span", {
+  style: {
+    color: "#15803d",
+    fontWeight: 600
+  }
+}, h.to)), /*#__PURE__*/React.createElement("div", {
+  style: {
+    fontSize: 12,
+    color: "#94a3b8",
+    marginTop: 2
+  }
+}, h.by, " · ", h.when)))))))));
 }
 function LoanBlock({
   loan,
