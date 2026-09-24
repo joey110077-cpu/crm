@@ -2387,7 +2387,7 @@ function ClientsPage({
   });
   return /*#__PURE__*/React.createElement("tr", {
     key: l.id,
-    style: c.flag ? { ...S.tr, background: "#fde68a" } : S.tr,
+    style: c.flag ? { ...S.tr, background: "#fffbeb" } : S.tr,
     onClick: () => onOpen(c.id)
   }, /*#__PURE__*/React.createElement("td", {
     style: {
@@ -2399,13 +2399,13 @@ function ClientsPage({
       ...S.td,
       ...S.tdName,
       ...S.tdSticky,
-      background: "#fde68a"
+      background: "#fffbeb"
     } : {
       ...S.td,
       ...S.tdName,
       ...S.tdSticky
     }
-  }, c.name), /*#__PURE__*/React.createElement("td", {
+  }, c.flag ? "\u2605 " + c.name : c.name), /*#__PURE__*/React.createElement("td", {
     style: S.td
   }, ty.short), /*#__PURE__*/React.createElement("td", {
     style: S.td,
@@ -2592,7 +2592,7 @@ function TypePage({
   });
   return /*#__PURE__*/React.createElement("tr", {
     key: l.id,
-    style: c.flag ? { ...S.tr, background: "#fde68a" } : S.tr,
+    style: c.flag ? { ...S.tr, background: "#fffbeb" } : S.tr,
     onClick: () => onOpen(c.id)
   }, /*#__PURE__*/React.createElement("td", {
     style: {
@@ -2604,13 +2604,13 @@ function TypePage({
       ...S.td,
       ...S.tdName,
       ...S.tdSticky,
-      background: "#fde68a"
+      background: "#fffbeb"
     } : {
       ...S.td,
       ...S.tdName,
       ...S.tdSticky
     }
-  }, c.name), /*#__PURE__*/React.createElement("td", {
+  }, c.flag ? "\u2605 " + c.name : c.name), /*#__PURE__*/React.createElement("td", {
     style: S.td,
     onClick: e => e.stopPropagation()
   }, l.link ? /*#__PURE__*/React.createElement("a", {
@@ -4818,7 +4818,8 @@ const S = {
     color: "#fff",
     fontWeight: 600,
     fontSize: 12,
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
+    border: "1px solid #334155"
   },
   thNum: {
     textAlign: "right"
@@ -4848,7 +4849,8 @@ const S = {
     color: "#334155",
     whiteSpace: "nowrap",
     verticalAlign: "middle",
-    background: "#fff"
+    background: "#fff",
+    border: "1px solid #e2e8f0"
   },
   tdName: {
     fontWeight: 700,
