@@ -2221,7 +2221,8 @@ function BankerPage({
     id: uid(),
     name: "",
     bank: "",
-    phone: ""
+    phone: "",
+    ltype: "house"
   }]);
   const upd = (id, k, v) => onSave(bankers.map(b => b.id === id ? {
     ...b,
@@ -2275,12 +2276,14 @@ function BankerPage({
   }, "Bank"), /*#__PURE__*/React.createElement("th", {
     style: S.th
   }, "Phone"), /*#__PURE__*/React.createElement("th", {
+    style: S.th
+  }, "Type"), /*#__PURE__*/React.createElement("th", {
     style: {
       ...S.th,
       width: 50
     }
   }))), /*#__PURE__*/React.createElement("tbody", null, list.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
-    colSpan: 5,
+    colSpan: 6,
     style: {
       ...S.td,
       textAlign: "center",
@@ -2317,6 +2320,18 @@ function BankerPage({
     placeholder: "Phone",
     onChange: e => upd(b.id, "phone", e.target.value)
   })), /*#__PURE__*/React.createElement("td", {
+    style: S.td
+  }, /*#__PURE__*/React.createElement("select", {
+    style: S.bankerInput,
+    value: b.ltype || "house",
+    onChange: e => upd(b.id, "ltype", e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "house"
+  }, "House Loan"), /*#__PURE__*/React.createElement("option", {
+    value: "car"
+  }, "Car Loan"), /*#__PURE__*/React.createElement("option", {
+    value: "personal"
+  }, "Personal Loan"))), /*#__PURE__*/React.createElement("td", {
     style: S.td
   }, /*#__PURE__*/React.createElement("button", {
     style: S.fuDel,
