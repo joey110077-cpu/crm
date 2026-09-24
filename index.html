@@ -582,6 +582,25 @@ const DB = {
       return;
     }
     localStorage.removeItem("crm_" + key);
+  },
+  subscribe(onChange) {
+    if (!useCloud) return () => {};
+    const s = this._init();
+    const ch = s.channel("crm_store_changes").on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "crm_store"
+    }, payload => {
+      try {
+        const row = payload.new || payload.old || {};
+        onChange(row.key, row.value);
+      } catch (e) {}
+    }).subscribe();
+    return () => {
+      try {
+        s.removeChannel(ch);
+      } catch (e) {}
+    };
   }
 };
 const TYPES = [{
@@ -1936,6 +1955,21 @@ function CRM({ onLogout, currentUser }) {
       }
       setLoading(false);
     })();
+    // 实时同步：云端数据变化时自动更新本地
+    const unsub = DB.subscribe(async (key, value) => {
+      try {
+        let v = value;
+        if (v == null) {
+          v = await DB.get(key);
+        }
+        if (key === "clients" && v) setClients(JSON.parse(v));
+        else if (key === "verifications" && v) setVerifications(JSON.parse(v));
+        else if (key === "bankers" && v) setBankers(JSON.parse(v));
+      } catch (e) {}
+    });
+    return () => {
+      try { unsub && unsub(); } catch (e) {}
+    };
   }, []);
   const persistVerifications = async next => {
     setVerifications(next);
