@@ -523,6 +523,19 @@ const SUPABASE_URL = "https://bkxawhdlqdmkflrweevu.supabase.co"; // <-- 教程�
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJreGF3aGRscWRta2ZscndlZXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTY1NDIsImV4cCI6MjEwMzM5MjU0Mn0.XGWM0AkLbkDmMifR0h8g-IQeezjOrr7eU5XiHBGprsg"; // <-- 教程第 3 步填这里
 
 const useCloud = SUPABASE_URL && SUPABASE_KEY;
+let _authClient = null;
+function authClient() {
+  if (!_authClient) {
+    _authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      auth: {
+        storage: window.sessionStorage,
+        persistSession: true,
+        autoRefreshToken: true
+      }
+    });
+  }
+  return _authClient;
+}
 let supa = null;
 const DB = {
   _init() {
@@ -1585,7 +1598,7 @@ function LoginPage({
     setErr("");
     setBusy(true);
     try {
-      const s = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const s = authClient();
       const {
         data,
         error
@@ -1739,7 +1752,7 @@ function App() {
   const [session, setSession] = React.useState(null);
   const [checking, setChecking] = React.useState(true);
   React.useEffect(() => {
-    const s = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const s = authClient();
     s.auth.getSession().then(({
       data
     }) => {
@@ -1758,7 +1771,7 @@ function App() {
     };
   }, []);
   const logout = async () => {
-    const s = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const s = authClient();
     await s.auth.signOut();
     setSession(null);
   };
