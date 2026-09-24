@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application Form</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --label: #1f4e9c;
+    --header-bg: #fde9a8;
+    --header-text: #c0392b;
+    --border: #000;
+    --check: #c0392b;
+    --focus: #eef6ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    background: #e9e9e9;
+    margin: 0; padding: 24px;
+    font-size: 12.5px; line-height: 1.4;
+  }
+  .toolbar {
+    width: 210mm; max-width: 100%; margin: 0 auto 16px;
+    display: flex; gap: 10px; justify-content: flex-end; align-items: center;
+  }
+  .toolbar button {
+    font: inherit; font-size: 13px; padding: 8px 16px;
+    border: 1px solid var(--header-text); background: var(--header-text);
+    color: #fff; border-radius: 4px; cursor: pointer;
+  }
+  .toolbar button.ghost { background: #fff; color: var(--header-text); }
+  .toolbar button:hover { opacity: .9; }
+  .toast { font-size: 12px; color: #2e8b57; opacity: 0; transition: opacity .2s; margin-right: auto; }
+  .toast.show { opacity: 1; }
+
+  .sheet {
+    width: 210mm; max-width: 100%; min-height: 297mm; margin: 0 auto;
+    background: #fff; padding: 12mm 12mm; border: 1px solid var(--border);
+    box-shadow: 0 2px 12px rgba(0,0,0,.12);
+  }
+  .section-title {
+    background: var(--header-bg); color: var(--header-text); text-align: center;
+    font-weight: bold; font-size: 12.5px; padding: 4px 0; margin-bottom: 8px;
+  }
+  .section { margin-bottom: 4px; }
+  .gap { height: 12px; }
+
+  .row { display: flex; align-items: flex-start; padding: 2px 8px; min-height: 22px; }
+  .label { color: var(--label); font-weight: bold; flex-shrink: 0; padding-top: 3px; text-transform: uppercase; }
+  .colon { width: 14px; flex-shrink: 0; padding-top: 3px; color: var(--label); font-weight: bold; }
+  .value { flex: 1; }
+
+  .grid2 { display: flex; gap: 20px; padding: 0 8px; }
+  .grid2 > .col { flex: 1; }
+  .grid2 .row { padding-left: 0; }
+
+  input.field, textarea.field {
+    width: 100%; font: inherit; font-weight: bold; color: var(--ink);
+    border: none; border-bottom: 1px solid transparent; background: transparent;
+    padding: 2px 2px; resize: none; outline: none; text-transform: uppercase;
+  }
+  input.field:hover, textarea.field:hover { border-bottom-color: #ccc; }
+  input.field:focus, textarea.field:focus { border-bottom-color: var(--label); background: var(--focus); }
+  textarea.field { line-height: 1.4; overflow: hidden; }
+
+  .checks { display: flex; gap: 60px; padding: 6px 8px; }
+  .check-item { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; color: var(--label); font-weight: bold; text-transform: uppercase; }
+  .box { width: 34px; height: 14px; border: 1px solid var(--border); display: inline-block; }
+  .box.on { background: var(--check); border-color: var(--check); }
+
+  table.tbl { width: calc(100% - 16px); margin: 0 8px; border-collapse: collapse; }
+  table.tbl th, table.tbl td { border: 1px solid var(--border); padding: 2px 4px; text-align: center; }
+  table.tbl th { color: var(--label); font-weight: bold; text-transform: uppercase; font-size: 12px; }
+  table.tbl td { height: 34px; }
+  table.tbl input, table.tbl textarea {
+    width: 100%; border: none; background: transparent; outline: none;
+    font: inherit; font-weight: bold; text-align: center; text-transform: uppercase;
+  }
+  table.tbl textarea {
+    resize: none; overflow: hidden; line-height: 1.3;
+    white-space: pre-wrap; word-break: break-word; vertical-align: middle; padding: 2px;
+  }
+  table.tbl input:focus, table.tbl textarea:focus { background: var(--focus); }
+
+  /* salary / payslip */
+  .pay-wrap { padding: 4px 8px; }
+  .pay-row { display: flex; align-items: center; padding: 2px 0; }
+  .pay-row .plabel { width: 150px; color: var(--label); font-weight: bold; text-transform: uppercase; }
+  .pay-row .pcolon { width: 14px; color: var(--label); font-weight: bold; }
+  .pay-row .rm { width: 26px; font-weight: bold; }
+  .pay-row input {
+    width: 130px; box-sizing: border-box; font: inherit; font-weight: bold; text-align: right;
+    border: none; border-bottom: 1px solid #ddd; background: transparent; outline: none; padding: 2px 4px;
+  }
+  .pay-row input:focus { border-bottom-color: var(--label); background: var(--focus); }
+  .pay-block { border: 1px dashed #bbb; padding: 6px 10px; margin-bottom: 8px; }
+  .pay-block h4 { margin: 0 0 4px; color: var(--header-text); font-size: 12.5px; }
+  .block-title {
+    font: inherit; font-weight: bold; color: var(--header-text); font-size: 12.5px;
+    text-transform: uppercase; border: none; border-bottom: 1px solid transparent;
+    background: transparent; outline: none; margin-bottom: 4px; padding: 2px 2px; width: 200px;
+  }
+  .block-title:hover { border-bottom-color: #ccc; }
+  .block-title:focus { border-bottom-color: var(--header-text); background: var(--focus); }
+  .block-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .del-block {
+    border: none; background: transparent; color: #c0392b; cursor: pointer;
+    font-size: 16px; line-height: 1; padding: 0 4px;
+  }
+  .del-block:hover { color: #000; }
+  .add-payslip {
+    font-size: 12px; padding: 5px 14px; border-style: solid;
+    color: #fff; background: var(--header-text); border-color: var(--header-text);
+  }
+  .add-payslip:hover { opacity: .9; background: var(--header-text); }
+  .pay-note { display:flex; align-items:center; padding: 2px 0; }
+  .pay-note .plabel { width: 150px; color: var(--label); font-weight: bold; text-transform: uppercase; }
+  .pay-note .pcolon { width: 14px; color: var(--label); font-weight: bold; }
+  .pay-note .rm { width: 26px; font-weight: bold; }
+  .pay-note input { width: 130px; text-align: left; font: inherit; font-weight: bold; border: none; border-bottom: 1px solid #ddd; background: transparent; outline: none; padding: 2px 4px; }
+  .pay-note input:focus { border-bottom-color: var(--label); background: var(--focus); }
+  .nett { color: var(--header-text); }
+  .nett input { border-bottom-color: var(--header-text); }
+  .add-row { padding: 4px 0; }
+  .add-btn {
+    font: inherit; font-size: 11px; color: var(--label);
+    background: transparent; border: 1px dashed var(--label);
+    border-radius: 4px; padding: 2px 10px; cursor: pointer;
+  }
+  .add-btn:hover { background: var(--focus); }
+  .item-row { display: flex; align-items: center; padding: 2px 0; gap: 0; }
+  .item-row .iname {
+    width: 150px; box-sizing: border-box; font: inherit; font-weight: bold; color: var(--label);
+    text-transform: uppercase; border: none; border-bottom: 1px solid #ddd;
+    background: transparent; outline: none; padding: 2px 0;
+  }
+  .item-row .iname:focus { border-bottom-color: var(--label); background: var(--focus); }
+  .item-row .pcolon { width: 14px; color: var(--label); font-weight: bold; }
+  .item-row .rm { width: 26px; font-weight: bold; }
+  .item-row .iamt {
+    width: 130px; box-sizing: border-box; font: inherit; font-weight: bold; text-align: right;
+    border: none; border-bottom: 1px solid #ddd; background: transparent; outline: none; padding: 2px 4px;
+  }
+  .item-row .iamt:focus { border-bottom-color: var(--label); background: var(--focus); }
+  .item-row .del {
+    margin-left: 8px; border: none; background: transparent; color: #c0392b;
+    cursor: pointer; font-size: 14px; line-height: 1;
+  }
+
+  @page { size: A4; margin: 10mm; }
+  @media print {
+    html, body { background: #fff; padding: 0; margin: 0; }
+    .sheet {
+      box-shadow: none; border: none;
+      width: 100%; max-width: 100%; min-height: 0 !important;
+      padding: 0;
+    }
+    .toolbar { display: none; }
+    .no-print { display: none !important; }
+    input.field, textarea.field, table.tbl input, table.tbl textarea, .pay-row input {
+      border-bottom-color: transparent !important; background: transparent !important;
+    }
+    .section, table.tbl, .pay-block { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="toast" id="toast">Copied</span>
+  <button class="ghost" onclick="clearForm()">Clear</button>
+  <button class="ghost" onclick="saveArchive()">💾 存档</button>
+  <button class="ghost" onclick="openLoadArchive()">📂 读取存档</button>
+  <button class="ghost" onclick="copyAll()">Copy all</button>
+  <button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="sheet">
+
+  <!-- (a) Company's Details -->
+  <div class="section">
+    <div class="section-title">(a) Company's Details</div>
+    <div class="row"><div class="label" style="width:150px">Name of Company</div><div class="colon">:</div><div class="value"><input class="field" id="co_name"></div></div>
+    <div class="row"><div class="label" style="width:150px">Position</div><div class="colon">:</div><div class="value"><input class="field" id="co_pos"></div></div>
+    <div class="row"><div class="label" style="width:150px">Year of Service</div><div class="colon">:</div><div class="value"><input class="field" id="co_yos" oninput="document.getElementById('date_joined').value=this.value"></div></div>
+    <div class="row"><div class="label" style="width:150px">Office Address</div><div class="colon">:</div><div class="value"><textarea class="field" id="co_addr" rows="1"></textarea></div></div>
+    <div class="row"><div class="label" style="width:150px">Office No</div><div class="colon">:</div><div class="value"><input class="field" id="co_tel"></div></div>
+    <div class="row"><div class="label" style="width:150px">Nature of Business</div><div class="colon">:</div><div class="value"><textarea class="field" id="co_nature" rows="1"></textarea></div></div>
+  </div>
+  <div class="gap"></div>
+
+  <!-- (b) Applicant's Details -->
+  <div class="section">
+    <div class="section-title">(b) Applicant's Details</div>
+    <div class="grid2">
+      <div class="col">
+        <div class="row"><div class="label" style="width:130px">Full Name as IC</div><div class="colon">:</div><div class="value"><input class="field" id="ap_name"></div></div>
+        <div class="row"><div class="label" style="width:130px">IC No.</div><div class="colon">:</div><div class="value"><input class="field" id="ap_ic"></div></div>
+        <div class="row"><div class="label" style="width:130px">Contact No</div><div class="colon">:</div><div class="value"><input class="field" id="ap_contact"></div></div>
+        <div class="row"><div class="label" style="width:130px">Email address</div><div class="colon">:</div><div class="value"><input class="field" id="ap_email" style="text-transform:none"></div></div>
+      </div>
+    </div>
+    <div class="row"><div class="label" style="width:130px">Residential Address</div><div class="colon">:</div><div class="value"><textarea class="field" id="ap_addr" rows="1"></textarea></div></div>
+    <div class="row"><div class="label" style="width:130px">Years of stay</div><div class="colon">:</div><div class="value"><input class="field" id="ap_years"></div></div>
+    <div class="row"><div class="label" style="width:130px">Mother Full Name</div><div class="colon">:</div><div class="value"><input class="field" id="ap_mother"></div></div>
+  </div>
+  <div class="gap"></div>
+
+  <!-- (c) Spouse's Details -->
+  <div class="section">
+    <div class="section-title">(c) Spouse's Details</div>
+    <div class="checks">
+      <div class="check-item" onclick="pickOne(this,'marital')"><span class="box"></span> Single</div>
+      <div class="check-item" onclick="pickOne(this,'marital')"><span class="box"></span> Married</div>
+    </div>
+    <div class="row"><div class="label" style="width:130px">Full Name as IC</div><div class="colon">:</div><div class="value"><input class="field" id="sp_name"></div></div>
+    <div class="row"><div class="label" style="width:130px">IC Number</div><div class="colon">:</div><div class="value"><input class="field" id="sp_ic"></div></div>
+    <div class="row"><div class="label" style="width:130px">Contact No</div><div class="colon">:</div><div class="value"><input class="field" id="sp_contact"></div></div>
+  </div>
+  <div class="gap"></div>
+
+  <!-- (d) Emergency's Contact -->
+  <div class="section">
+    <div class="section-title">(d) Emergency's Contact</div>
+    <table class="tbl" id="tbl_emergency">
+      <thead><tr><th style="width:26%">Full Name as IC</th><th style="width:20%">Relationship</th><th style="width:18%">Contact No</th><th>Residential Address</th></tr></thead>
+      <tbody><tr><td><textarea rows="1"></textarea></td><td><textarea rows="1"></textarea></td><td><textarea rows="1"></textarea></td><td><textarea rows="1"></textarea></td></tr></tbody>
+    </table>
+  </div>
+  <div class="gap"></div>
+
+  <!-- (e) Disbursement Details -->
+  <div class="section">
+    <div class="section-title">(e) Disbursement Details</div>
+    <div class="grid2">
+      <div class="col"><div class="row"><div class="label" style="width:60px">Bank</div><div class="colon">:</div><div class="value"><input class="field" id="db_bank"></div></div></div>
+      <div class="col"><div class="row"><div class="label" style="width:150px">Bank Account No.</div><div class="colon">:</div><div class="value"><input class="field" id="db_acc"></div></div></div>
+    </div>
+  </div>
+  <div class="gap"></div>
+
+  <!-- (f) Previous Company's Details -->
+  <div class="section">
+    <div class="section-title">(f) Previous Company's Details</div>
+    <div class="row"><div class="label" style="width:130px">Previous</div><div class="colon">:</div><div class="value"><input class="field" id="pv_name"></div></div>
+    <div class="row"><div class="label" style="width:130px">Position</div><div class="colon">:</div><div class="value"><input class="field" id="pv_pos"></div></div>
+    <div class="row"><div class="label" style="width:130px">Work how long</div><div class="colon">:</div><div class="value"><input class="field" id="pv_long"></div></div>
+  </div>
+
+  <div class="gap no-print"></div>
+
+  <!-- Salary / Payslip (screen only, moved to bottom) -->
+  <div class="section no-print">
+    <div class="section-title">Salary &amp; Payslip</div>
+    <div class="pay-wrap">
+      <div class="pay-row"><div class="plabel">Salary</div><div class="pcolon">:</div><div class="rm">RM</div><input id="salary" type="text" inputmode="decimal" placeholder="0" autocomplete="off" oninput="recalc()"></div>
+      <div class="pay-note"><div class="plabel">Date Joined</div><div class="pcolon">:</div><div class="rm"></div><input id="date_joined" style="text-transform:uppercase" oninput="document.getElementById('co_yos').value=this.value"></div>
+
+      <div style="height:8px"></div>
+
+      <div id="payslips"></div>
+      <div class="add-row"><button type="button" class="add-btn add-payslip" onclick="addPayslip()">+ Add Payslip</button></div>
+
+      <div style="height:8px"></div>
+
+      <div class="pay-note"><div class="plabel">Salary Transfer To</div><div class="pcolon">:</div><div class="rm"></div><input id="transfer_to" style="text-transform:uppercase"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ---- disable browser autofill/history dropdown on all fields ----
+  function killAutocomplete(root){
+    (root||document).querySelectorAll('input, textarea').forEach(function(el){
+      el.setAttribute('autocomplete','off');
+      el.setAttribute('autocorrect','off');
+      el.setAttribute('autocapitalize','off');
+      el.setAttribute('spellcheck','false');
+    });
+  }
+  killAutocomplete(document);
+
+  // ---- checkbox single-select ----
+  function pickOne(el, group) {
+    document.querySelectorAll('.check-item[onclick*="' + group + '"]').forEach(function(i){ i.querySelector('.box').classList.remove('on'); });
+    el.querySelector('.box').classList.add('on');
+  }
+  // ---- textarea auto-grow ----
+  function grow(t) { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
+  document.querySelectorAll('textarea.field').forEach(function(t){ grow(t); t.addEventListener('input', function(){ grow(t); }); });
+  document.querySelectorAll('table.tbl textarea').forEach(function(t){ grow(t); t.addEventListener('input', function(){ grow(t); }); });
+
+  // ---- input auto-shrink font when text overflows ----
+  function autofit(inp) {
+    inp.style.fontSize = '';
+    var base = parseFloat(getComputedStyle(inp).fontSize) || 14;
+    var size = base;
+    while (inp.scrollWidth > inp.clientWidth && size > 12) {
+      size -= 0.5;
+      inp.style.fontSize = size + 'px';
+    }
+  }
+  var AUTOFIT_SEL = 'input.field, table.tbl input, .item-row .iname';
+  function autofitAll() { document.querySelectorAll(AUTOFIT_SEL).forEach(autofit); }
+  document.addEventListener('input', function(e){
+    if (e.target && e.target.matches && e.target.matches(AUTOFIT_SEL)) autofit(e.target);
+  });
+  window.addEventListener('load', autofitAll);
+  window.addEventListener('beforeprint', autofitAll);
+
+  // ---- number helpers ----
+  function num(v){ v = parseFloat(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(v)?0:v; }
+  function money(v){ return v.toFixed(2); }
+  // add thousand separators; keeps 2 decimals if the value has them
+  function comma(str){
+    str = String(str).trim();
+    if (!str) return str;
+    var n = parseFloat(str.replace(/,/g,''));
+    if (isNaN(n)) return str;
+    var parts = str.replace(/,/g,'').split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  }
+
+  // ---- Malaysia statutory defaults (2026, June onward), aligned to HR.my / Payroll.my ----
+  // SOCSO Cat 1 EMPLOYEE = 1.25% (Invalidity 0.5% + SKBBK/Lindung 24 Jam 0.75%),
+  // computed on the band midpoint, capped at RM74.40. Wage ceiling RM6000.
+  // EIS EMPLOYEE = 0.2% on band midpoint, capped at RM11.90.
+  // EPF EMPLOYEE = 11%, rounded up to nearest ringgit.
+  function bandMid(salary){
+    if (salary <= 0) return 0;
+    var w = Math.min(salary, 6000);
+    // RM100 bands: midpoint of the band the wage falls into (e.g. 4400.01-4500 -> 4450)
+    var lo = Math.floor((w - 0.01) / 100) * 100;
+    if (lo < 0) lo = 0;
+    var hi = lo + 100;
+    if (hi > 6000) hi = 6000;
+    return (lo + hi) / 2;
+  }
+  function epfEmployee(salary){ return Math.ceil(salary * 0.11); }
+  // round to nearest 5 sen (PERKESO tables use 5-sen steps)
+  function round5sen(v){ return Math.round(v * 20) / 20; }
+
+  function calcStatutory(salary){
+    var mid = bandMid(salary);
+    return {
+      epf: epfEmployee(salary),
+      socso: salary <= 0 ? 0 : Math.min(round5sen(mid * 0.0125), 74.40),
+      eis: salary <= 0 ? 0 : Math.min(round5sen(mid * 0.002), 11.90)
+    };
+  }
+
+  var payslipSeq = 0;
+
+  // build one complete payslip block
+  function addPayslip(title){
+    payslipSeq++;
+    var b = payslipSeq;
+    var s = calcStatutory(num(document.getElementById('salary').value));
+    var block = document.createElement('div');
+    block.className = 'pay-block';
+    block.dataset.b = b;
+    block.innerHTML =
+      '<div class="block-head">' +
+        '<input class="block-title" value="' + (title || (b + ' PAYSLIP')) + '">' +
+        '<button type="button" class="del-block" title="Remove payslip" onclick="removePayslip(this)">\u00d7</button>' +
+      '</div>' +
+      '<div class="pay-row"><div class="plabel">EPF (11%)</div><div class="pcolon">:</div><div class="rm">RM</div><input class="d-epf" value="' + money(s.epf) + '" data-auto="1"></div>' +
+      '<div class="pay-row"><div class="plabel">SOCSO</div><div class="pcolon">:</div><div class="rm">RM</div><input class="d-socso" value="' + money(s.socso) + '" data-auto="1"></div>' +
+      '<div class="pay-row"><div class="plabel">EIS</div><div class="pcolon">:</div><div class="rm">RM</div><input class="d-eis" value="' + money(s.eis) + '" data-auto="1"></div>' +
+      '<div class="pay-row"><div class="plabel">PCB</div><div class="pcolon">:</div><div class="rm">RM</div><input class="d-pcb"></div>' +
+      '<div class="items"></div>' +
+      '<div class="add-row"><button type="button" class="add-btn" onclick="addItem(this)">+ Add Item</button></div>' +
+      '<div class="pay-row nett"><div class="plabel">Nett Salary</div><div class="pcolon">:</div><div class="rm">RM</div><input class="d-nett" readonly></div>';
+    document.getElementById('payslips').appendChild(block);
+    killAutocomplete(block);
+    // wire deduction inputs
+    block.querySelectorAll('.d-epf,.d-socso,.d-eis,.d-pcb').forEach(function(inp){
+      inp.addEventListener('input', function(){ inp.dataset.auto='0'; nettBlock(block); });
+    });
+    nettBlock(block);
+    return block;
+  }
+
+  function removePayslip(btn){
+    btn.closest('.pay-block').remove();
+  }
+
+  // add a custom deduction line inside a block
+  function addItem(btn){
+    var block = btn.closest('.pay-block');
+    var wrap = block.querySelector('.items');
+    var row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML =
+      '<input class="iname" placeholder="ITEM NAME">' +
+      '<div class="pcolon">:</div>' +
+      '<div class="rm">RM</div>' +
+      '<input class="iamt" inputmode="decimal" placeholder="0.00">' +
+      '<button type="button" class="del" title="Remove">\u00d7</button>';
+    wrap.appendChild(row);
+    killAutocomplete(row);
+    var amt = row.querySelector('.iamt');
+    amt.addEventListener('input', function(){ nettBlock(block); });
+    // format to 2 decimals when leaving the field
+    amt.addEventListener('blur', function(){
+      if (amt.value.trim() !== '') { amt.value = money(num(amt.value)); nettBlock(block); }
+    });
+    row.querySelector('.del').addEventListener('click', function(){
+      row.remove();
+      nettBlock(block);
+    });
+  }
+
+  // recompute nett for one block
+  function nettBlock(block){
+    var salary = num(document.getElementById('salary').value);
+    var epf = num(block.querySelector('.d-epf').value);
+    var socso = num(block.querySelector('.d-socso').value);
+    var eis = num(block.querySelector('.d-eis').value);
+    var pcb = num(block.querySelector('.d-pcb').value);
+    var extra = 0;
+    block.querySelectorAll('.items .iamt').forEach(function(inp){ extra += num(inp.value); });
+    block.querySelector('.d-nett').value = money(salary - epf - socso - eis - pcb - extra);
+  }
+
+  // salary change: refresh auto deduction values + all netts
+  function recalc(){
+    var s = calcStatutory(num(document.getElementById('salary').value));
+    document.querySelectorAll('#payslips .pay-block').forEach(function(block){
+      setAuto(block.querySelector('.d-epf'), money(s.epf));
+      setAuto(block.querySelector('.d-socso'), money(s.socso));
+      setAuto(block.querySelector('.d-eis'), money(s.eis));
+      nettBlock(block);
+    });
+  }
+  function setAuto(el, val){ if(!el.value || el.dataset.auto==='1'){ el.value=val; el.dataset.auto='1'; } }
+
+  // start with one block
+  addPayslip('PAYSLIP');
+
+  // ---- clear ----
+  function clearForm(){
+    if(!confirm('Clear all fields?')) return;
+    document.querySelectorAll('input, textarea').forEach(function(f){ if(!f.closest('#payslips')) { f.value=''; f.dataset.auto=''; } });
+    document.getElementById('salary').value = '';
+    document.getElementById('payslips').innerHTML = '';
+    payslipSeq = 0;
+    addPayslip('PAYSLIP');
+    document.querySelectorAll('textarea.field').forEach(grow);
+    document.querySelectorAll('table.tbl textarea').forEach(grow);
+    document.querySelectorAll('.box').forEach(function(b){ b.classList.remove('on'); });
+    recalc();
+  }
+
+  // ---- toast + copy ----
+  let toastTimer;
+  function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.classList.remove('show');},1500); }
+  function doCopy(text,msg){
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(function(){toast(msg);},fb);} else {fb();}
+    function fb(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');toast(msg);}catch(e){toast('Copy failed');} document.body.removeChild(ta); }
+  }
+  function v(id){ return (document.getElementById(id).value||'').trim(); }
+
+  // wrap a long string at word boundaries near maxLen chars per line
+  function wrap(text, maxLen){
+    maxLen = maxLen || 60;
+    var words = text.split(/\s+/);
+    var lines = [], line = '';
+    words.forEach(function(w){
+      if (!line) { line = w; }
+      else if ((line + ' ' + w).length <= maxLen) { line += ' ' + w; }
+      else { lines.push(line); line = w; }
+    });
+    if (line) lines.push(line);
+    return lines.join('\n');
+  }
+
+  function copyAll(){
+    var L = [];
+    L.push('Name : ' + v('ap_name'));
+    L.push('I/C No. : ' + v('ap_ic'));
+    L.push('Contact No. : ' + v('ap_contact'));
+    L.push('Residential Address : ' + wrap(v('ap_addr'), 60));
+    L.push('');
+    L.push('Company Name : ' + v('co_name'));
+    L.push('Address : ' + wrap(v('co_addr'), 60));
+    L.push('Office Tel : ' + v('co_tel'));
+    L.push('Position : ' + v('co_pos'));
+    L.push('Nature of Business : ' + wrap(v('co_nature'), 60));
+    L.push('');
+    L.push('DATE JOINED : \ud83d\udea8 ' + v('date_joined'));
+    L.push('');
+    L.push('');
+
+    var blocks = document.querySelectorAll('#payslips .pay-block');
+    blocks.forEach(function(block, idx){
+      L.push((block.querySelector('.block-title').value||'').trim().toUpperCase());
+      L.push('');
+      if (idx === 0) { L.push('SALARY : RM ' + comma(v('salary'))); L.push(''); }
+      L.push('EPF(11%) : RM ' + comma(block.querySelector('.d-epf').value.trim()));
+      L.push('SOCSO : RM ' + comma(block.querySelector('.d-socso').value.trim()));
+      L.push('EIS : RM ' + comma(block.querySelector('.d-eis').value.trim()));
+      L.push('PCB : RM ' + comma(block.querySelector('.d-pcb').value.trim()));
+      block.querySelectorAll('.items .item-row').forEach(function(row){
+        var name = (row.querySelector('.iname').value||'').trim().toUpperCase();
+        var amt = (row.querySelector('.iamt').value||'').trim();
+        if (name || amt) L.push((name||'ITEM') + ' : RM ' + comma(amt));
+      });
+      L.push('');
+      L.push('NETT SALARY : RM ' + comma(block.querySelector('.d-nett').value.trim()));
+      if (idx < blocks.length - 1) L.push('----------------------------------');
+      L.push('');
+    });
+
+    if (v('transfer_to')) { L.push('SALARY TRANSFER TO ' + v('transfer_to')); L.push(''); }
+    L.push('\u2b50PREVIOUS COMPANY \u2b50');
+    L.push('Previous : ' + v('pv_name'));
+    L.push('Position : ' + v('pv_pos'));
+    L.push('Work how long : ' + v('pv_long'));
+
+    doCopy(L.join('\n').replace(/\n{3,}/g,'\n\n').trim().toUpperCase(), 'All copied');
+  }
+
+  // ---- Named archives in browser localStorage (LEADING SHEET style) ----
+  const ARCH_KEY = 'application_form_archives';
+  function getArchives(){ try{ return JSON.parse(localStorage.getItem(ARCH_KEY)||'{}'); }catch(e){ return {}; } }
+
+  const FIXED_IDS = ['co_name','co_pos','co_yos','co_addr','co_tel','co_nature',
+    'ap_name','ap_contact','ap_ic','ap_email','ap_addr','ap_years','ap_mother',
+    'sp_name','sp_ic','sp_contact','db_bank','db_acc','pv_name','pv_pos','pv_long',
+    'salary','date_joined','transfer_to'];
+
+  function collectData(){
+    const fixed = {};
+    FIXED_IDS.forEach(id=>{ const el=document.getElementById(id); if(el) fixed[id]=el.value; });
+    // marital single-select: which .check-item is on
+    let marital = '';
+    document.querySelectorAll('.check-item[onclick*="marital"]').forEach((item,i)=>{
+      if(item.querySelector('.box').classList.contains('on')) marital = String(i);
+    });
+    // parent & emergency tables (row of textareas)
+    const tableRows = id => [...document.querySelectorAll('#'+id+' tbody tr')].map(tr=>
+      [...tr.querySelectorAll('textarea')].map(t=>t.value));
+    const emergency = tableRows('tbl_emergency');
+    // dynamic payslip blocks
+    const payslips = [];
+    document.querySelectorAll('#payslips .pay-block').forEach(block=>{
+      const items = [];
+      block.querySelectorAll('.items .item-row').forEach(r=>{
+        items.push({ name:(r.querySelector('.iname')||{}).value||'', amt:(r.querySelector('.iamt')||{}).value||'' });
+      });
+      payslips.push({
+        title: (block.querySelector('.block-title')||{}).value||'',
+        epf:  (block.querySelector('.d-epf')||{}).value||'',
+        socso:(block.querySelector('.d-socso')||{}).value||'',
+        eis:  (block.querySelector('.d-eis')||{}).value||'',
+        pcb:  (block.querySelector('.d-pcb')||{}).value||'',
+        epfAuto:  (block.querySelector('.d-epf')||{}).dataset ? block.querySelector('.d-epf').dataset.auto : '',
+        socsoAuto:(block.querySelector('.d-socso')||{}).dataset ? block.querySelector('.d-socso').dataset.auto : '',
+        eisAuto:  (block.querySelector('.d-eis')||{}).dataset ? block.querySelector('.d-eis').dataset.auto : '',
+        items
+      });
+    });
+    return { fixed, marital, emergency, payslips };
+  }
+
+  function applyData(d){
+    if(!d) return;
+    // fixed fields
+    (FIXED_IDS).forEach(id=>{ const el=document.getElementById(id); if(el && d.fixed) el.value = d.fixed[id]||''; });
+    // marital
+    document.querySelectorAll('.check-item[onclick*="marital"]').forEach((item,i)=>{
+      const box=item.querySelector('.box');
+      if(d.marital!=='' && String(i)===String(d.marital)) box.classList.add('on');
+      else box.classList.remove('on');
+    });
+    // tables
+    const fillTable = (id, rows) => {
+      const trs = document.querySelectorAll('#'+id+' tbody tr');
+      (rows||[]).forEach((cells,ri)=>{
+        if(trs[ri]){
+          const tas = trs[ri].querySelectorAll('textarea');
+          cells.forEach((val,ci)=>{ if(tas[ci]) tas[ci].value = val||''; });
+        }
+      });
+    };
+    fillTable('tbl_emergency', d.emergency);
+    // rebuild payslip blocks
+    document.getElementById('payslips').innerHTML='';
+    payslipSeq = 0;
+    (d.payslips||[]).forEach(ps=>{
+      const block = addPayslip(ps.title||'PAYSLIP');
+      const setv = (sel,val)=>{ const el=block.querySelector(sel); if(el) el.value = val||''; };
+      setv('.d-epf', ps.epf); setv('.d-socso', ps.socso); setv('.d-eis', ps.eis); setv('.d-pcb', ps.pcb);
+      // restore manual/auto flags so recalc() doesn't overwrite hand-typed deductions
+      const flag=(sel,f)=>{ const el=block.querySelector(sel); if(el) el.dataset.auto = (f===undefined||f==='')?'0':f; };
+      flag('.d-epf', ps.epfAuto); flag('.d-socso', ps.socsoAuto); flag('.d-eis', ps.eisAuto);
+      // rebuild items
+      const addBtn = block.querySelector('.add-row .add-btn');
+      (ps.items||[]).forEach(it=>{
+        addItem(addBtn);
+        const rows = block.querySelectorAll('.items .item-row');
+        const row = rows[rows.length-1];
+        if(row){
+          const n=row.querySelector('.iname'), a=row.querySelector('.iamt');
+          if(n) n.value = it.name||''; if(a) a.value = it.amt||'';
+        }
+      });
+      nettBlock(block);
+    });
+    if(!(d.payslips||[]).length){ addPayslip('PAYSLIP'); }
+    // regrow textareas
+    document.querySelectorAll('textarea.field').forEach(grow);
+    document.querySelectorAll('table.tbl textarea').forEach(grow);
+    autofitAll();
+  }
+
+  function saveArchive(){
+    const nm=(document.getElementById('ap_name').value||'').trim().toUpperCase();
+    const suggested = nm ? nm : ('存档 '+new Date().toLocaleString());
+    const label=prompt('存档名称（同名会覆盖）：', suggested);
+    if(label===null) return;
+    const key=label.trim().toUpperCase(); if(!key){ alert('名称不能空白'); return; }
+    const arch=getArchives();
+    arch[key]={ data:collectData(), saved:new Date().toISOString() };
+    try{ localStorage.setItem(ARCH_KEY, JSON.stringify(arch)); toast('已存档：'+key); }
+    catch(e){ alert('存档失败：浏览器空间不足'); }
+  }
+
+  function openLoadArchive(){
+    const arch=getArchives();
+    if(!Object.keys(arch).length){ alert('还没有任何存档'); return; }
+    let modal=document.getElementById('archModal');
+    if(!modal){
+      modal=document.createElement('div');
+      modal.id='archModal';
+      modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:9999;';
+      modal.innerHTML='<div id="archBox" style="background:#fff;border-radius:8px;max-width:460px;width:90%;max-height:80vh;overflow:auto;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,.3);"></div>';
+      modal.onclick=function(e){ if(e.target===modal) modal.remove(); };
+      document.body.appendChild(modal);
+    }
+    const box=modal.querySelector('#archBox');
+    box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><b style="font-size:15px;">读取存档</b><span onclick="document.getElementById(\'archModal\').remove()" style="cursor:pointer;font-size:20px;color:#888;">×</span></div>'
+      +'<input id="archSearch" placeholder="🔍 搜索名字…" oninput="renderArchList(this.value)" style="width:100%;padding:8px 10px;margin-bottom:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;box-sizing:border-box;">'
+      +'<div id="archList"></div>';
+    renderArchList('');
+    box.querySelector('#archSearch').focus();
+  }
+  function renderArchList(q){
+    const arch=getArchives();
+    const keys=Object.keys(arch).filter(k=>k.toLowerCase().includes((q||'').toLowerCase()));
+    const list=document.getElementById('archList');
+    if(!list) return;
+    if(!keys.length){ list.innerHTML='<div style="color:#999;padding:12px 6px;">没有符合的存档</div>'; return; }
+    keys.sort((a,b)=>(arch[b].saved||'').localeCompare(arch[a].saved||''));
+    let html='';
+    keys.forEach(k=>{
+      const when=arch[k].saved?new Date(arch[k].saved).toLocaleString():'';
+      const kEsc=k.replace(/'/g,"\\'");
+      html+='<div style="display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #eee;">'
+        +'<div style="flex:1;cursor:pointer;" onclick="pickArchive(\''+kEsc+'\')">'
+        +'<div style="font-weight:bold;color:#2c6fbb;">'+k+'</div>'
+        +'<div style="font-size:11px;color:#999;">'+when+'</div></div>'
+        +'<button onclick="delArchive(\''+kEsc+'\')" style="border:none;background:none;color:#c00;cursor:pointer;font-size:16px;padding:4px 8px;">🗑</button>'
+        +'</div>';
+    });
+    list.innerHTML=html;
+  }
+  function pickArchive(k){
+    const arch=getArchives();
+    if(arch[k]){ applyData(arch[k].data); const m=document.getElementById('archModal'); if(m) m.remove(); }
+  }
+  function delArchive(k){
+    if(!confirm('删除存档「'+k+'」？')) return;
+    const arch=getArchives();
+    delete arch[k];
+    localStorage.setItem(ARCH_KEY,JSON.stringify(arch));
+    if(Object.keys(arch).length){ const s=document.getElementById('archSearch'); renderArchList(s?s.value:''); }
+    else { const m=document.getElementById('archModal'); if(m) m.remove(); }
+  }
+</script>
+
+</body>
+</html>

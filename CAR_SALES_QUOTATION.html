@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Sales Quotation</title>
+<style>
+  :root{
+    --ink:#1a2b3c;
+    --line:#e8dfa8;
+    --accent:#0f5c8c;
+    --accent-soft:#faf3cf;
+    --label-bg:#fdf8dd;
+    --field-bg:#fffdf0;
+    --paper:#fffdf2;
+    --muted:#8a8250;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Tahoma,Arial,sans-serif;
+    background:#ffffff;
+    color:var(--ink);
+    padding:24px 12px;
+  }
+  .sheet, .sheet input{ text-transform:uppercase; }
+  .sheet{
+    max-width:640px;
+    margin:0 auto;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:6px;
+    box-shadow:0 6px 24px rgba(20,40,60,.08);
+    overflow:hidden;
+  }
+  h1{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:.5px;
+    margin:0;
+    padding:18px 22px;
+    border-bottom:2px solid var(--accent);
+    color:var(--accent);
+  }
+  .section-title{
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    padding:16px 22px 6px;
+  }
+  .row{
+    display:grid;
+    grid-template-columns:190px 1fr;
+    border-top:1px solid var(--line);
+    align-items:stretch;
+  }
+  .row .label{
+    background:var(--label-bg);
+    font-weight:600;
+    font-size:13.5px;
+    padding:10px 22px;
+    display:flex;
+    align-items:center;
+    border-right:1px solid var(--line);
+  }
+  .row .val{
+    padding:4px 10px;
+    display:flex;
+    align-items:center;
+  }
+  .row input, .row select{
+    width:100%;
+    border:none;
+    background:var(--field-bg);
+    font-size:14px;
+    padding:8px 10px;
+    color:var(--ink);
+    font-family:inherit;
+    border-radius:3px;
+    outline:none;
+  }
+  .row input:focus, .row select:focus{
+    box-shadow:inset 0 0 0 2px var(--accent);
+    background:#fff;
+  }
+  .readonly input{background:#f0f3f5;color:var(--muted);}
+  .price-head{
+    display:grid;
+    grid-template-columns:190px 1fr 1fr;
+    background:var(--accent-soft);
+    font-weight:700;
+    font-size:12.5px;
+    letter-spacing:.5px;
+    border-top:1px solid var(--line);
+  }
+  .price-head div{padding:8px 22px;}
+  .total-row{
+    display:grid;
+    grid-template-columns:190px 1fr;
+    border-top:2px solid var(--accent);
+    background:var(--accent-soft);
+  }
+  .total-row .label{
+    text-align:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:14px;
+    background:transparent;
+    border-right:1px solid var(--line);
+  }
+  .total-row .val{font-weight:800;font-size:16px;color:var(--accent);padding-left:22px;}
+  .cb-strip{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    border-top:1px solid var(--line);
+  }
+  .cb-cell{
+    display:flex;
+    flex-direction:column;
+    border-right:1px solid var(--line);
+  }
+  .cb-cell:last-child{border-right:none;}
+  .cb-cell .cb-head{
+    background:var(--label-bg);
+    font-weight:600;
+    font-size:12px;
+    padding:8px 10px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  .cb-cell.bal .cb-head{background:var(--accent-soft);font-weight:800;}
+  .cb-cell input{
+    border:none;
+    background:var(--field-bg);
+    font-size:14px;
+    padding:9px 8px;
+    text-align:center;
+    font-family:inherit;
+    color:var(--ink);
+    outline:none;
+    width:100%;
+  }
+  .cb-cell input:focus{box-shadow:inset 0 0 0 2px var(--accent);background:#fff;}
+  .cb-cell.bal input{font-weight:800;color:var(--accent);background:var(--accent-soft);}
+  @media(max-width:520px){
+    .cb-strip{grid-template-columns:repeat(2,1fr);}
+    .cb-cell:nth-child(2n){border-right:none;}
+    .cb-cell{border-bottom:1px solid var(--line);}
+  }
+  /* PART A cashback breakdown page */
+  .bank-row{
+    display:grid;
+    grid-template-columns:1fr 200px;
+    border-top:1px solid var(--line);
+    align-items:stretch;
+  }
+  .bank-row .label{
+    background:var(--label-bg);
+    font-weight:700;
+    font-size:14px;
+    padding:12px 22px;
+    display:flex;align-items:center;
+    border-right:1px solid var(--line);
+  }
+  .bank-row input{
+    border:none;background:var(--field-bg);
+    font-size:15px;font-weight:700;
+    text-align:center;padding:10px 18px;
+    width:100%;font-family:inherit;color:var(--ink);outline:none;
+  }
+  .bank-row input:focus{box-shadow:inset 0 0 0 2px var(--accent);background:#fff;}
+  .part-title{
+    background:#f0932b;
+    color:#fff;
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:1px;
+    padding:9px 22px;
+    border-top:1px solid var(--line);
+  }
+  .pa-table{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    border-top:1px solid var(--line);
+  }
+  .pa-table > div{
+    padding:9px 14px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .pa-table > div:nth-child(4n){border-right:none;}
+  .pa-head{
+    background:var(--label-bg);
+    font-weight:700;
+    justify-content:center;
+    text-align:center;
+    flex-direction:column;
+  }
+  .pa-head small{font-weight:500;color:var(--muted);font-size:11px;}
+  .pa-table input{
+    border:none;background:transparent;
+    font-size:13.5px;text-align:center;
+    width:100%;font-family:inherit;color:var(--ink);outline:none;
+  }
+  .pa-table .cell-label input{text-align:center;font-weight:600;}
+  .pa-table input:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);}
+  .pa-table .pa-total{background:var(--accent-soft);font-weight:800;}
+  .pa-table .pa-total input{font-weight:800;color:var(--accent);}
+  .addon-block{border-top:1px solid var(--line);}
+  .addon-row{
+    display:grid;
+    grid-template-columns:1fr 160px 40px;
+    border-bottom:1px solid var(--line);
+    align-items:center;
+  }
+  .addon-row .addon-name{padding:10px 22px;font-size:13.5px;}
+  .addon-row input.addon-amt{
+    border:none;background:transparent;
+    text-align:center;font-size:13.5px;
+    padding:10px 8px;width:100%;
+    font-family:inherit;color:var(--ink);outline:none;
+  }
+  .addon-row input.addon-amt:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);}
+  .addon-row.final{background:var(--accent-soft);}
+  .addon-row.final input.addon-amt{font-weight:800;color:var(--accent);}
+  .addon-spacer{display:block;}
+  .addon-row .del-item{
+    background:rgba(20,40,60,.6);color:#fff;border:none;border-radius:50%;
+    width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;
+    margin:0 auto;display:block;
+  }
+  .item-name{
+    border:none;background:transparent;font-size:13.5px;
+    padding:10px 22px;width:100%;font-family:inherit;color:var(--ink);outline:none;font-weight:600;
+  }
+  .item-name:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);}
+  .btn-additem{
+    background:#fff;border:1px dashed var(--accent);color:var(--accent);
+    border-radius:5px;padding:6px 14px;font-size:12.5px;font-weight:600;
+    cursor:pointer;font-family:inherit;
+  }
+  .btn-additem:hover{background:var(--accent-soft);}
+  .del-fixed{
+    background:rgba(20,40,60,.6);color:#fff;border:none;border-radius:50%;
+    width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;margin:0 auto;display:block;
+  }
+  .summary-block{border-top:2px solid var(--accent);}
+  .sum-gap{height:22px;border-bottom:1px solid var(--line);}
+  .sum-row{
+    display:grid;
+    grid-template-columns:1fr 200px;
+    border-bottom:1px solid var(--line);
+    align-items:center;
+  }
+  .sum-row .sum-label{padding:9px 22px;font-size:13.5px;font-weight:600;}
+  .sum-row input{
+    border:none;background:transparent;
+    text-align:center;font-size:13.5px;font-weight:600;
+    padding:9px 18px;width:100%;font-family:inherit;color:var(--ink);outline:none;
+  }
+  .sum-row input:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);}
+  .sum-row.total{background:var(--accent-soft);}
+  .sum-row.total .sum-label{font-weight:800;}
+  .sum-row.total input{font-weight:800;color:var(--accent);}
+  .sum-item-amt{
+    border:none;background:transparent;text-align:center;font-size:13.5px;font-weight:600;
+    padding:9px 18px;width:100%;font-family:inherit;color:var(--ink);outline:none;
+  }
+  .sum-item-amt:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);}
+  .sum-del{
+    background:rgba(20,40,60,.6);color:#fff;border:none;border-radius:50%;
+    width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;margin:0 auto;display:block;
+  }
+  .mth-title{
+    background:var(--label-bg);
+    font-weight:700;font-size:12px;letter-spacing:1px;
+    padding:8px 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .mth-row{
+    display:grid;
+    grid-template-columns:1fr 160px 40px;
+    border-bottom:1px solid var(--line);
+    align-items:center;
+  }
+  .mth-row .mth-label{padding:9px 22px;font-size:13px;color:var(--ink);}
+  .mth-row .mth-amt{
+    text-align:center;font-size:13px;padding:9px 8px;color:var(--ink);font-weight:600;
+  }
+  .mth-row input.mth-amt{
+    border:none;background:transparent;width:100%;font-family:inherit;outline:none;
+  }
+  .mth-row input.mth-amt:focus{background:#fff;box-shadow:inset 0 0 0 2px var(--accent);}
+  .mth-row .mth-del{
+    background:rgba(20,40,60,.6);color:#fff;border:none;border-radius:50%;
+    width:22px;height:22px;font-size:13px;line-height:1;cursor:pointer;padding:0;margin:0 auto;display:block;
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    padding:18px 22px;
+    border-top:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:600;
+    padding:10px 20px;
+    border-radius:5px;
+    border:1px solid var(--accent);
+    cursor:pointer;
+    transition:.15s;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:#0c4a70;}
+  .btn-ghost{background:#fff;color:var(--accent);}
+  .btn-ghost:hover{background:var(--accent-soft);}
+  .toolbar{
+    max-width:640px;
+    margin:0 auto 16px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .sheet + .sheet{margin-top:28px;}
+  .sheet-num{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:600;
+    padding:0 22px 14px;
+    text-align:center;
+  }
+  .pdf-area{
+    border-top:1px solid var(--line);
+    padding:14px 22px;
+  }
+  .pdf-label{
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .pdf-drop{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .pdf-drop input[type=file]{
+    font-size:13px;
+    font-family:inherit;
+  }
+  .pdf-view{
+    margin-top:12px;
+    display:none;
+  }
+  .pdf-view embed{
+    width:100%;
+    height:520px;
+    border:1px solid var(--line);
+    border-radius:4px;
+  }
+  .pdf-name{
+    font-size:12.5px;
+    color:var(--accent);
+    font-weight:600;
+    margin-top:6px;
+    display:none;
+  }
+  .photo-area{
+    border-top:1px solid var(--line);
+    padding:14px 22px;
+  }
+  .photo-label{
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .photo-drop{
+    border:1px dashed var(--line);
+    border-radius:5px;
+    padding:5px 10px;
+    text-align:center;
+    color:var(--muted);
+    font-size:11px;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .photo-drop:hover,.photo-drop.drag{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    color:var(--accent);
+  }
+  .photo-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:12px;
+  }
+  .photo-thumb{
+    position:relative;
+    width:100%;
+  }
+  .photo-thumb img{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:4px;
+    display:block;
+    cursor:zoom-in;
+  }
+  .photo-thumb .del{
+    position:absolute;
+    top:6px;right:6px;
+    background:rgba(20,40,60,.75);
+    color:#fff;
+    border:none;
+    border-radius:50%;
+    width:24px;height:24px;
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    padding:0;
+  }
+  #lightbox{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,20,30,.88);
+    z-index:999;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    cursor:zoom-out;
+  }
+  #lightbox img{
+    max-width:100%;
+    max-height:100%;
+    border-radius:6px;
+    box-shadow:0 8px 40px rgba(0,0,0,.5);
+  }
+  @media(max-width:520px){
+    .row,.total-row{grid-template-columns:130px 1fr;}
+    .price-head{grid-template-columns:130px 1fr 1fr;}
+    .row .label,.price-head div{padding-left:12px;padding-right:8px;font-size:12px;}
+  }
+  @media print{
+    body{background:#fff;padding:0;}
+    .sheet{box-shadow:none;border:none;max-width:100%;}
+    .sheet + .sheet{margin-top:0;page-break-before:always;}
+    .toolbar,.actions{display:none;}
+    .row input,.row select{background:transparent;box-shadow:none;}
+    .photo-drop,.pdf-drop{display:none;}
+    .photo-thumb .del{display:none;}
+    .photo-thumb{width:100%;break-inside:avoid;}
+    /* hide all delete buttons and Add item buttons in print */
+    .del-item,.del-fixed,.sum-del,.mth-del,.btn-additem{display:none !important;}
+    /* space after Customer Name (first row) before Car Detail */
+    .sheet .row:first-of-type{border-bottom:14px solid #fff;}
+    /* space between BALANCE and the LUCAS block */
+    .fixed-deduct{border-top:14px solid #fff;}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="btn-primary" onclick="addSheet()">+ Add Page</button>
+  <button class="btn-primary" onclick="copyInfo(this)">Agent Copy</button>
+  <button class="btn-primary" onclick="agentFinalCopy(this)">Agent Final Copy</button>
+  <button class="btn-primary" onclick="finalCopy(this)">Final Copy</button>
+  <button class="btn-primary" onclick="window.print()">Print / Save PDF</button>
+  <button class="btn-primary" onclick="saveArchive()">💾 存档</button>
+  <button class="btn-primary" onclick="openLoadArchive()">📂 读取存档</button>
+  <button class="btn-ghost" onclick="location.reload()">Clear All</button>
+</div>
+
+<div id="sheets"></div>
+
+<template id="sheetTpl">
+<div class="sheet">
+  <h1>CAR SALES QUOTATION</h1>
+
+  <!-- CUSTOMER NAME -->
+  <div class="row" style="border-top:none;">
+    <div class="label">Customer Name</div>
+    <div class="val"><input type="text" class="q-name"></div>
+  </div>
+
+  <!-- CAR DETAIL -->
+  <div class="section-title">Car Detail</div>
+  <div class="row">
+    <div class="label">Plate No</div>
+    <div class="val"><input type="text" class="q-plate"></div>
+  </div>
+  <div class="row">
+    <div class="label">Brand</div>
+    <div class="val">
+      <select class="q-sel" onchange="onPick(this,'q-brand')">
+        <option value=""></option>
+        <option>BMW</option>
+        <option>MAZDA</option>
+        <option>HONDA</option>
+        <option>PEUGEOT</option>
+        <option>VELLFIRE</option>
+        <option>TOYOTA</option>
+        <option>SUBARU</option>
+        <option value="__OTHER__">OTHER</option>
+      </select>
+      <input type="text" class="q-brand q-other" style="display:none" placeholder="Type brand" onblur="ifEmptyRestore(this,'q-brand')">
+    </div>
+  </div>
+  <div class="row">
+    <div class="label">Model</div>
+    <div class="val"><input type="text" class="q-model"></div>
+  </div>
+  <div class="row">
+    <div class="label">Year</div>
+    <div class="val"><input type="text" class="q-year"></div>
+  </div>
+
+  <!-- LOAN -->
+  <div class="section-title">Loan</div>
+  <div class="row">
+    <div class="label">Loan Amount (RM)</div>
+    <div class="val"><input type="text" class="money" inputmode="decimal" onblur="fmtMoney(this)"></div>
+  </div>
+  <div class="row">
+    <div class="label">Monthly Installment (RM)</div>
+    <div class="val"><input type="text" class="money mth-inst" inputmode="decimal" oninput="syncMonthly()" onblur="fmtMoney(this);syncMonthly()"><input type="hidden" class="bank-fee"></div>
+  </div>
+  <div class="row">
+    <div class="label">Tenure</div>
+    <div class="val"><input type="text"></div>
+  </div>
+  <div class="row">
+    <div class="label">Financing</div>
+    <div class="val">
+      <select class="q-sel" onchange="onPick(this,'q-financing')">
+        <option value=""></option>
+        <option>AEON</option>
+        <option>CIMB</option>
+        <option>AMB</option>
+        <option>CHAILEASE</option>
+        <option>X STAR</option>
+        <option>PBB</option>
+        <option>CARSOME</option>
+        <option value="__OTHER__">OTHER</option>
+      </select>
+      <input type="text" class="q-financing q-other" style="display:none" placeholder="Type financing" onblur="ifEmptyRestore(this,'q-financing')">
+    </div>
+  </div>
+  <div class="cb-strip">
+    <div class="cb-cell">
+      <div class="cb-head">Cashback (RM)</div>
+      <input type="text" class="cb-total" inputmode="decimal" oninput="calcCashback(this)" onblur="fmtMoney(this);calcCashback(this)">
+    </div>
+    <div class="cb-cell">
+      <div class="cb-head">Lucas</div>
+      <input type="text" class="cb-lucas cb-deduct" inputmode="decimal" oninput="calcCashback(this)" onblur="fmtMoney(this);calcCashback(this)">
+    </div>
+    <div class="cb-cell">
+      <div class="cb-head">3rd Party (7%)</div>
+      <input type="text" class="cb-thirdparty" readonly>
+    </div>
+    <div class="cb-cell">
+      <div class="cb-head">Refer Fees</div>
+      <input type="text" class="cb-refer cb-deduct" inputmode="decimal" oninput="calcCashback(this)" onblur="fmtMoney(this);calcCashback(this)">
+    </div>
+    <div class="cb-cell bal">
+      <div class="cb-head">Balance</div>
+      <input type="text" class="cb-balance" readonly>
+    </div>
+  </div>
+
+  <div class="photo-area">
+    <div class="photo-label">Photos</div>
+    <div class="photo-drop" onclick="this.nextElementSibling.click()">
+      + Add photo (click or paste)
+    </div>
+    <input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this.files, this.closest('.photo-area'))">
+    <div class="photo-grid"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-ghost" onclick="removeSheet(this)">Remove this page</button>
+  </div>
+</div>
+</template>
+
+<template id="partATpl">
+<div class="sheet fixed-page">
+  <h1>CASH BACK</h1>
+
+  <div class="bank-row">
+    <div class="label">BANK TOTAL CASH BACK :</div>
+    <input type="text" class="pa-bank" readonly>
+  </div>
+
+  <div class="part-title">PART A</div>
+
+  <div class="pa-table">
+    <div class="pa-head">Item</div>
+    <div class="pa-head">LUCAS</div>
+    <div class="pa-head">3RD PARTY<small>7%</small></div>
+    <div class="pa-head">REFER FEES</div>
+
+    <div class="cell-label"><input type="text" class="pa-item" oninput="this.dataset.edited=1"></div>
+    <div class="pa-lucas-cell"><input type="text" class="pa-lucas" readonly></div>
+    <div class="pa-third-cell"><input type="text" class="pa-third" readonly></div>
+    <div class="pa-refer-cell"><input type="text" class="pa-refer" readonly></div>
+
+    <div class="pa-total" style="grid-column:1 / 4;"><input type="text" value="BALANCE:" readonly style="text-align:left;font-weight:800;color:var(--ink);"></div>
+    <div class="pa-total"><input type="text" class="pa-balance" readonly></div>
+  </div>
+
+  <div class="addon-block">
+    <div class="fixed-deduct">
+      <div class="addon-row" data-key="lucas2">
+        <div class="addon-name" style="font-weight:600;">LUCAS</div>
+        <input type="text" class="deduct-amt addon-amt" inputmode="decimal" oninput="calcFinal(this)" onblur="fmtMoney(this);calcFinal(this)">
+        <button class="del-fixed" onclick="this.closest('.addon-row').remove();calcFinal(this)">×</button>
+      </div>
+      <div class="addon-row" data-key="agent">
+        <div class="addon-name" style="font-weight:600;">AGENT</div>
+        <input type="text" class="deduct-amt addon-amt" inputmode="decimal" oninput="calcFinal(this)" onblur="fmtMoney(this);calcFinal(this)">
+        <button class="del-fixed" onclick="this.closest('.addon-row').remove();calcFinal(this)">×</button>
+      </div>
+    </div>
+
+    <div class="mth-list"></div>
+
+    <div class="pa-items"></div>
+
+    <div style="padding:8px 22px;">
+      <button class="btn-additem" onclick="addItem(this)">+ Add item</button>
+    </div>
+
+    <div class="addon-row final">
+      <div class="addon-name" style="font-weight:800;">CUSTOMER BALANCE</div>
+      <input type="text" class="pa-final addon-amt" readonly>
+      <span class="addon-spacer"></span>
+    </div>
+
+    <div class="summary-block">
+      <div class="sum-gap"></div>
+      <div class="sum-row"><div class="sum-label">MONTHLY INSTALMENT :</div><input type="text" class="sum-mth" readonly></div>
+      <div class="sum-row"><div class="sum-label">BANK FEE :</div><input type="text" class="sum-bankfee" readonly></div>
+      <div class="sum-row"><div class="sum-label">CUS TAKEN :</div><input type="text" class="sum-cus" readonly></div>
+      <div class="sum-row"><div class="sum-label">AGENT TAKE :</div><input type="text" class="sum-agent" readonly></div>
+      <div class="sum-row"><div class="sum-label">LUCAS TAKEN :</div><input type="text" class="sum-lucas" readonly></div>
+      <div class="sum-row"><div class="sum-label">3RD PARTY :</div><input type="text" class="sum-handling" readonly></div>
+      <div class="sum-row"><div class="sum-label">REFER FEES :</div><input type="text" class="sum-refer" readonly></div>
+      <div class="sum-items"></div>
+      <div style="padding:8px 22px;"><button class="btn-additem" onclick="addSumItem(this)">+ Add item</button></div>
+      <div class="sum-row total"><div class="sum-label">SUB TOTAL :</div><input type="text" class="sum-total" readonly></div>
+    </div>
+  </div>
+</div>
+</template>
+
+<script>
+  const container = document.getElementById('sheets');
+  const tpl = document.getElementById('sheetTpl');
+  const partATpl = document.getElementById('partATpl');
+
+  function fixedPage(){ return container.querySelector('.fixed-page'); }
+
+  function addSheet(){
+    const node = tpl.content.cloneNode(true);
+    const fp = fixedPage();
+    if(fp) container.insertBefore(node, fp);
+    else container.appendChild(node);
+    renumber();
+    const sheets = container.querySelectorAll('.sheet:not(.fixed-page)');
+    const newSheet = sheets[sheets.length-1];
+    // auto-fill customer name from the first page
+    if(sheets.length > 1){
+      const firstName = sheets[0].querySelector('.q-name');
+      const newName = newSheet.querySelector('.q-name');
+      if(firstName && newName) newName.value = firstName.value;
+    }
+    if(window.__ready){
+      newSheet.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }
+  function copyInfo(btn){
+    const pages = container.querySelectorAll('.sheet:not(.fixed-page)');
+    if(!pages.length) return;
+    const num = v => { const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n; };
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const gv = (sheet, cls) => { const el = sheet.querySelector('.'+cls); return el ? el.value.trim() : ''; };
+
+    const lines = [];
+    lines.push(gv(pages[0], 'q-name').toUpperCase());
+    lines.push('');
+
+    let total = 0;
+    pages.forEach(s=>{
+      const plate = gv(s,'q-plate').toUpperCase();
+      const brand = gv(s,'q-brand').toUpperCase();
+      const model = gv(s,'q-model').toUpperCase();
+      const year  = gv(s,'q-year');
+      const fin   = gv(s,'q-financing').toUpperCase();
+      const bal   = gv(s,'cb-balance');
+      lines.push(plate + ' - ' + brand);
+      lines.push(model + ' ( ' + year + ' )');
+      lines.push(fin + ' CASH BACK');
+      lines.push('RM ' + (bal || '0.00'));
+      lines.push('');
+      total += num(bal);
+    });
+    lines.push('TOTAL CASH BACK : RM ' + fmt(total));
+
+    const text = lines.join('\n');
+    const done = ()=>{ const t=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=t,1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done){
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+  function addFixedPage(){
+    container.appendChild(partATpl.content.cloneNode(true));
+    renumber();
+  }
+  function removeSheet(btn){
+    const sheet = btn.closest('.sheet');
+    if(sheet.classList.contains('fixed-page')) return; // never remove the cashback page
+    const quotes = container.querySelectorAll('.sheet:not(.fixed-page)');
+    if(quotes.length <= 1) return; // keep at least one quotation page
+    sheet.remove();
+    renumber();
+  }
+  function renumber(){
+    const sheets = container.querySelectorAll('.sheet');
+    const quoteCount = container.querySelectorAll('.sheet:not(.fixed-page)').length;
+    sheets.forEach((s,i)=>{
+      if(s.classList.contains('fixed-page')) return; // no page number on cashback page
+      let tag = s.querySelector('.sheet-num');
+      if(!tag){
+        tag = document.createElement('div');
+        tag.className = 'sheet-num';
+        s.appendChild(tag);
+      }
+      tag.textContent = 'Page ' + (i+1) + ' of ' + quoteCount;
+    });
+    // Cashback item follows the number of quotation pages: 1 page -> "1 CAR"
+    const item = container.querySelector('.fixed-page .pa-item');
+    if(item && !item.dataset.edited){
+      item.value = quoteCount + ' CAR';
+    }
+    syncBankTotal();
+    syncMonthly();
+  }
+
+  function syncMonthly(){
+    const fp = container.querySelector('.fixed-page');
+    if(!fp) return;
+    const list = fp.querySelector('.mth-list');
+    list.innerHTML = '';
+    const pages = container.querySelectorAll('.sheet:not(.fixed-page)');
+    pages.forEach((s, idx)=>{
+      const inst = s.querySelector('.mth-inst');
+      const val = inst ? inst.value.trim() : '';
+      // Monthly installment row (display only)
+      const row = document.createElement('div');
+      row.className = 'mth-row';
+      const label = document.createElement('div');
+      label.className = 'mth-label';
+      label.textContent = (idx+1) + ' CAR MONTHLY INSTALLMENT';
+      const amt = document.createElement('div');
+      amt.className = 'mth-amt';
+      amt.textContent = val || '0.00';
+      const del = document.createElement('button');
+      del.className = 'mth-del';
+      del.textContent = '×';
+      del.onclick = ()=>{ if(inst){ inst.value=''; syncMonthly(); } };
+      row.appendChild(label); row.appendChild(amt); row.appendChild(del);
+      list.appendChild(row);
+
+      // Bank fees row (editable, stored on the page's hidden .bank-fee)
+      const store = s.querySelector('.bank-fee');
+      const brow = document.createElement('div');
+      brow.className = 'mth-row';
+      const blabel = document.createElement('div');
+      blabel.className = 'mth-label';
+      blabel.textContent = (idx+1) + ' CAR BANK FEES';
+      const bamt = document.createElement('input');
+      bamt.type = 'text'; bamt.className = 'mth-amt bank-input'; bamt.inputMode = 'decimal';
+      bamt.value = store ? store.value : '';
+      bamt.oninput = ()=>{ if(store) store.value = bamt.value; calcFinal(fp.querySelector('.pa-final')); };
+      bamt.onblur = ()=>{ fmtMoney(bamt); if(store) store.value = bamt.value; calcFinal(fp.querySelector('.pa-final')); };
+      const bdel = document.createElement('button');
+      bdel.className = 'mth-del';
+      bdel.textContent = '×';
+      bdel.onclick = ()=>{ if(store) store.value=''; bamt.value=''; calcFinal(fp.querySelector('.pa-final')); };
+      brow.appendChild(blabel); brow.appendChild(bamt); brow.appendChild(bdel);
+      list.appendChild(brow);
+    });
+    calcFinal(fp.querySelector('.pa-final'));
+  }
+
+  function fmtMoney(el){
+    const raw = String(el.value).replace(/[^0-9.-]/g,'');
+    if(raw === '' ){ el.value=''; return; }
+    const n = parseFloat(raw);
+    if(isNaN(n)){ el.value=''; return; }
+    el.value = n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  function syncBankTotal(){
+    const num = v => { const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n; };
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    let bankSum=0, lucasSum=0, thirdSum=0, referSum=0;
+    container.querySelectorAll('.sheet:not(.fixed-page)').forEach(s=>{
+      bankSum  += num(s.querySelector('.cb-total') ? s.querySelector('.cb-total').value : 0);
+      lucasSum += num(s.querySelector('.cb-lucas') ? s.querySelector('.cb-lucas').value : 0);
+      thirdSum += num(s.querySelector('.cb-thirdparty') ? s.querySelector('.cb-thirdparty').value : 0);
+      referSum += num(s.querySelector('.cb-refer') ? s.querySelector('.cb-refer').value : 0);
+    });
+    const fp = container.querySelector('.fixed-page');
+    if(!fp) return;
+    fp.querySelector('.pa-bank').value  = bankSum  ? fmt(bankSum)  : '';
+    fp.querySelector('.pa-lucas').value = lucasSum ? fmt(lucasSum) : '';
+    fp.querySelector('.pa-third').value = thirdSum ? fmt(thirdSum) : '';
+    fp.querySelector('.pa-refer').value = referSum ? fmt(referSum) : '';
+    const balance = bankSum - lucasSum - thirdSum - referSum;
+    fp.querySelector('.pa-balance').value = bankSum ? fmt(balance) : '';
+    calcFinal(fp.querySelector('.pa-final'));
+  }
+
+  function calcFinal(el){
+    const fp = el.closest('.fixed-page') || container.querySelector('.fixed-page');
+    if(!fp) return;
+    const num = v => { const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n; };
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const balance = num(fp.querySelector('.pa-balance').value);
+    let deduct = 0;
+    fp.querySelectorAll('.deduct-amt').forEach(i=> deduct += num(i.value));
+    fp.querySelectorAll('.pa-items .item-amt').forEach(i=> deduct += num(i.value));
+    container.querySelectorAll('.sheet:not(.fixed-page) .mth-inst').forEach(i=> deduct += num(i.value));
+    container.querySelectorAll('.sheet:not(.fixed-page) .bank-fee').forEach(i=> deduct += num(i.value));
+    const hasBalance = fp.querySelector('.pa-balance').value !== '';
+    fp.querySelector('.pa-final').value = hasBalance ? fmt(balance - deduct) : '';
+    calcSummary(fp.querySelector('.sum-company'));
+  }
+
+  function calcSummary(el){
+    const fp = (el && el.closest('.fixed-page')) || container.querySelector('.fixed-page');
+    if(!fp) return;
+    const num = v => { const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n; };
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    // auto-fed rows
+    let mth = 0;
+    container.querySelectorAll('.sheet:not(.fixed-page) .mth-inst').forEach(i=> mth += num(i.value));
+    let bankfee = 0;
+    container.querySelectorAll('.sheet:not(.fixed-page) .bank-fee').forEach(i=> bankfee += num(i.value));
+    const cus     = num(fp.querySelector('.pa-final').value);      // CUSTOMER BALANCE
+    const agentRow = fp.querySelector('.addon-row[data-key="agent"] .deduct-amt');
+    const lucasRow = fp.querySelector('.addon-row[data-key="lucas2"] .deduct-amt');
+    const agent   = num(agentRow ? agentRow.value : 0); // AGENT
+    const lucas   = num(fp.querySelector('.pa-lucas').value) + num(lucasRow ? lucasRow.value : 0); // PART A LUCAS + manual LUCAS
+    const handling= num(fp.querySelector('.pa-third').value);      // 3RD PARTY 7%
+    const refer   = num(fp.querySelector('.pa-refer').value);      // REFER FEES
+
+    fp.querySelector('.sum-mth').value      = fmt(mth);
+    fp.querySelector('.sum-bankfee').value  = fmt(bankfee);
+    fp.querySelector('.sum-cus').value      = fmt(cus);
+    fp.querySelector('.sum-agent').value    = fmt(agent);
+    fp.querySelector('.sum-lucas').value    = fmt(lucas);
+    fp.querySelector('.sum-handling').value = fmt(handling);
+    fp.querySelector('.sum-refer').value    = fmt(refer);
+
+    let extra = 0;
+    fp.querySelectorAll('.sum-items .sum-item-amt').forEach(i=> extra += num(i.value));
+
+    const subtotal = mth + bankfee + cus + agent + lucas + handling + refer + extra;
+    fp.querySelector('.sum-total').value = fmt(subtotal);
+  }
+
+  function makeSumRow(fp){
+    const wrap = fp.querySelector('.sum-items');
+    const row = document.createElement('div');
+    row.className = 'sum-row';
+    const name = document.createElement('input');
+    name.type = 'text'; name.className = 'sum-item-name';
+    name.style.cssText = 'text-align:left;font-weight:600;';
+    const amt = document.createElement('input');
+    amt.type = 'text'; amt.className = 'sum-item-amt'; amt.inputMode = 'decimal';
+    amt.oninput = ()=>calcSummary(amt);
+    amt.onblur = ()=>{ fmtMoney(amt); calcSummary(amt); };
+    const del = document.createElement('button');
+    del.className = 'sum-del'; del.textContent = '×';
+    row.style.gridTemplateColumns = '1fr 160px 40px';
+    name.style.padding = '9px 22px'; name.style.border='none'; name.style.background='transparent';
+    name.style.fontFamily='inherit'; name.style.color='var(--ink)'; name.style.outline='none'; name.style.width='100%';
+    row.appendChild(name); row.appendChild(amt); row.appendChild(del);
+    wrap.appendChild(row);
+    return {row, name, amt, del};
+  }
+
+  function addSumItem(btn){
+    const fp = btn.closest('.fixed-page');
+    const b = makeSumRow(fp);
+    b.del.onclick = ()=>{ b.row.remove(); calcSummary(fp.querySelector('.sum-total')); };
+  }
+
+  function addItem(btn){
+    const fp = btn.closest('.fixed-page');
+    const wrap = fp.querySelector('.pa-items');
+    const row = document.createElement('div');
+    row.className = 'addon-row';
+    const name = document.createElement('input');
+    name.type = 'text'; name.className = 'item-name';
+    const amt = document.createElement('input');
+    amt.type = 'text'; amt.className = 'item-amt addon-amt'; amt.inputMode = 'decimal';
+    const del = document.createElement('button');
+    del.className = 'del-item'; del.textContent = '×';
+
+    // paired row in the CUSTOMER BALANCE summary block
+    const b = makeSumRow(fp);
+
+    // mark bottom amount as manually edited once user types in it
+    b.amt.addEventListener('input', ()=>{ b.amt.dataset.edited = '1'; });
+
+    // sync name top -> bottom
+    name.oninput = ()=>{ b.name.value = name.value; };
+    // amount: affects own total, and mirrors to bottom unless bottom was edited
+    amt.oninput = ()=>{
+      if(!b.amt.dataset.edited){ b.amt.value = amt.value; calcSummary(b.amt); }
+      calcFinal(amt);
+    };
+    amt.onblur = ()=>{
+      fmtMoney(amt);
+      if(!b.amt.dataset.edited){ b.amt.value = amt.value; calcSummary(b.amt); }
+      calcFinal(amt);
+    };
+
+    // deleting either side removes both
+    const removeBoth = ()=>{ row.remove(); b.row.remove(); calcFinal(fp.querySelector('.pa-final')); calcSummary(fp.querySelector('.sum-total')); };
+    del.onclick = removeBoth;
+    b.del.onclick = removeBoth;
+
+    row.appendChild(name); row.appendChild(amt); row.appendChild(del);
+    wrap.appendChild(row);
+  }
+
+  function calcCashback(el){
+    const sheet = el.closest('.sheet');
+    const num = v => { const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n; };
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const total = num(sheet.querySelector('.cb-total').value);
+
+    // 3rd Party = 7% of cashback
+    const thirdParty = total * 0.07;
+    sheet.querySelector('.cb-thirdparty').value = total ? fmt(thirdParty) : '';
+
+    // manual deductions (Lucas + Refer Fees)
+    let deduct = thirdParty;
+    sheet.querySelectorAll('.cb-deduct').forEach(d=> deduct += num(d.value));
+
+    const bal = total - deduct;
+    sheet.querySelector('.cb-balance').value = total ? fmt(bal) : '';
+    syncBankTotal();
+  }
+
+  function agentFinalCopy(btn){
+    const pages = container.querySelectorAll('.sheet:not(.fixed-page)');
+    if(!pages.length) return;
+    const fp = container.querySelector('.fixed-page');
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const gv = (s, cls) => { const el = s.querySelector('.'+cls); return el ? el.value.trim() : ''; };
+    const rm = v => 'RM ' + (v && v.trim() ? v.trim() : fmt(0));
+    const carLine = s => (gv(s,'q-plate').toUpperCase() + ' - ' + gv(s,'q-brand').toUpperCase());
+    const L = [];
+
+    L.push(gv(pages[0],'q-name').toUpperCase());
+    L.push('');
+    pages.forEach(s=>{
+      L.push(carLine(s));
+      L.push(': ' + rm(gv(s,'cb-balance')));
+      L.push('');
+    });
+    L.push('----------------------------------------------------');
+    L.push('');
+    const agentManual = (fp.querySelector('.addon-row[data-key="agent"] .deduct-amt')||{}).value || '';
+    const lucasManual = (fp.querySelector('.addon-row[data-key="lucas2"] .deduct-amt')||{}).value || '';
+    L.push('AGENT DEALER ');
+    L.push(rm(agentManual));
+    L.push('');
+    L.push('LUCAS DEALER');
+    L.push(rm(lucasManual));
+    L.push('');
+    pages.forEach(s=>{
+      L.push('MONTHLY INSTALMENT - ' + rm(gv(s,'mth-inst')));
+      L.push('BANK FEE - ' + rm(gv(s,'bank-fee')));
+    });
+    fp.querySelectorAll('.pa-items .addon-row').forEach(r=>{
+      const nm = ((r.querySelector('.item-name')||{}).value || '').toUpperCase();
+      const am = (r.querySelector('.item-amt')||{}).value || '';
+      if(nm || am) L.push((nm||'ITEM') + ' - ' + rm(am));
+    });
+    L.push('');
+    L.push('CUSTOMER BALANCE : ' + rm(gv(fp,'pa-final')));
+
+    const text = L.join('\n').toUpperCase();
+    const done = ()=>{ const t=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=t,1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+    } else { fallbackCopy(text, done); }
+  }
+
+  function finalCopy(btn){
+    const pages = container.querySelectorAll('.sheet:not(.fixed-page)');
+    if(!pages.length) return;
+    const fp = container.querySelector('.fixed-page');
+    const num = v => { const n = parseFloat(String(v).replace(/[^0-9.-]/g,'')); return isNaN(n)?0:n; };
+    const fmt = n => n.toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const gv = (s, cls) => { const el = s.querySelector('.'+cls); return el ? el.value.trim() : ''; };
+    const rm = v => 'RM ' + (v && v.trim() ? v.trim() : fmt(0));
+    const carLine = s => (gv(s,'q-plate').toUpperCase() + ' - ' + gv(s,'q-brand').toUpperCase());
+    const L = [];
+
+    const custName = gv(pages[0],'q-name').toUpperCase();
+    L.push('*' + custName + '*');
+    L.push('');
+    L.push('------------------------------------------------');
+    L.push('*Dealer Cash Back*');
+    L.push('');
+
+    let totalCB = 0;
+    pages.forEach(s=>{
+      const cb = gv(s,'cb-total');
+      L.push(carLine(s));
+      L.push(': ' + rm(cb));
+      L.push('');
+      totalCB += num(cb);
+    });
+    L.push('*TOTAL CASH BACK : RM ' + fmt(totalCB) + '*');
+    L.push('');
+    L.push('Lucas : ' + rm(gv(fp,'pa-lucas')));
+    L.push('3rd PARTY : ' + rm(gv(fp,'pa-third')));
+    L.push('REFER FEE : ' + rm(gv(fp,'pa-refer')));
+    L.push('');
+    L.push('*BALANCE CASH BACK : ' + rm(gv(fp,'pa-balance')) + '*');
+    L.push('');
+    L.push('-----------------------------------------------------------------------');
+    L.push('*Lucas Dealer*');
+    L.push('');
+    pages.forEach(s=>{
+      L.push(carLine(s));
+      L.push(': ' + rm(gv(s,'cb-balance')));
+      L.push('');
+    });
+    L.push('----------------------------------------------------');
+
+    const agentManual = (fp.querySelector('.addon-row[data-key="agent"] .deduct-amt')||{}).value || '';
+    const lucasManual = (fp.querySelector('.addon-row[data-key="lucas2"] .deduct-amt')||{}).value || '';
+    L.push('AGENT Dealer ');
+    L.push(rm(agentManual));
+    L.push('');
+    L.push('Lucas Dealer');
+    L.push(rm(lucasManual));
+    L.push('');
+    pages.forEach(s=>{
+      L.push('MONTHLY INSTALMENT - ' + rm(gv(s,'mth-inst')));
+      L.push('BANK FEE - ' + rm(gv(s,'bank-fee')));
+    });
+    fp.querySelectorAll('.pa-items .addon-row').forEach(r=>{
+      const nm = ((r.querySelector('.item-name')||{}).value || '').toUpperCase();
+      const am = (r.querySelector('.item-amt')||{}).value || '';
+      if(nm || am) L.push((nm||'ITEM') + ' - ' + rm(am));
+    });
+    L.push('');
+    L.push('*CUSTOMER BALANCE : ' + rm(gv(fp,'pa-final')) + '*');
+    L.push('');
+    L.push('----------------------------------------------------');
+    L.push('_*FINAL DETAIL*_');
+    L.push('');
+    L.push('_*MONTHLY INSTALMENT : ' + rm(gv(fp,'sum-mth')) + '*_');
+    L.push('_*BANK FEE : ' + rm(gv(fp,'sum-bankfee')) + '*_');
+    L.push('_*CUS TAKEN : ' + rm(gv(fp,'sum-cus')) + '*_');
+    L.push('_*AGENT TAKE : ' + rm(gv(fp,'sum-agent')) + '*_');
+    L.push('_*LUCAS TAKEN : ' + rm(gv(fp,'sum-lucas')) + '*_');
+    L.push('_*3RD PARTY : ' + rm(gv(fp,'sum-handling')) + '*_');
+    L.push('_*REFER FEES : ' + rm(gv(fp,'sum-refer')) + '*_');
+    fp.querySelectorAll('.sum-items .sum-row').forEach(r=>{
+      const nm = ((r.querySelector('.sum-item-name')||{}).value || '').toUpperCase();
+      const am = (r.querySelector('.sum-item-amt')||{}).value || '';
+      if(nm || am) L.push('_*' + (nm||'ITEM') + ' : ' + rm(am) + '*_');
+    });
+    L.push('');
+    L.push('*SUB TOTAL : ' + rm(gv(fp,'sum-total')) + '*');
+
+    const text = L.join('\n').toUpperCase();
+    const done = ()=>{ const t=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=t,1500); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));
+    } else { fallbackCopy(text, done); }
+  }
+
+  function ifEmptyRestore(txt, targetCls){
+    if(txt.value.trim() === ''){
+      const wrap = txt.closest('.val');
+      const sel = wrap.querySelector('.q-sel');
+      if(sel){ sel.style.display = ''; sel.value = ''; }
+      txt.style.display = 'none';
+    }
+  }
+
+  function onPick(sel, targetCls){
+    const wrap = sel.closest('.val');
+    const txt = wrap.querySelector('.'+targetCls);
+    if(sel.value === '__OTHER__'){
+      sel.style.display = 'none';   // hide dropdown, show only the text box
+      txt.style.display = '';
+      txt.value = '';
+      txt.focus();
+    } else {
+      txt.style.display = 'none';
+      txt.value = sel.value;
+    }
+  }
+
+  function saveArchive(){
+    const pages = [];
+    container.querySelectorAll('.sheet:not(.fixed-page)').forEach(s=>{
+      const inputs = [];
+      s.querySelectorAll('input').forEach(i=>{
+        if(i.type === 'file') return;
+        if(i.readOnly) { inputs.push(i.value); return; } // keep order alignment
+        inputs.push(i.value);
+      });
+      const photos = [];
+      s.querySelectorAll('.photo-grid img').forEach(img=> photos.push(img.src));
+      pages.push({inputs, photos});
+    });
+
+    // fixed page
+    const fp = container.querySelector('.fixed-page');
+    const fixed = {};
+    fixed.lucas = (fp.querySelector('.addon-row[data-key="lucas2"] .deduct-amt')||{}).value || '';
+    fixed.agent = (fp.querySelector('.addon-row[data-key="agent"] .deduct-amt')||{}).value || '';
+    // top item rows (paired)
+    const items = [];
+    fp.querySelectorAll('.pa-items .addon-row').forEach(r=>{
+      items.push({ name:(r.querySelector('.item-name')||{}).value||'', amt:(r.querySelector('.item-amt')||{}).value||'' });
+    });
+    // bottom-only sum items (added directly at bottom, not paired). Distinguish by count:
+    // paired bottoms are created alongside top items in order; extra bottoms come after.
+    const sumRows = [];
+    fp.querySelectorAll('.sum-items .sum-row').forEach(r=>{
+      sumRows.push({ name:(r.querySelector('.sum-item-name')||{}).value||'', amt:(r.querySelector('.sum-item-amt')||{}).value||'' });
+    });
+
+    const data = { v:1, pages, fixed, items, sumRows };
+
+    // ---- save into browser localStorage (named, overwrite on same name) ----
+    const first = (container.querySelector('.sheet:not(.fixed-page) .q-name')||{}).value || '';
+    const suggested = first.trim() || ('QUOTATION ' + new Date().toLocaleString());
+    const label = prompt('存档名称（同名会覆盖）：', suggested);
+    if(label === null) return;
+    const key = label.trim();
+    if(!key){ alert('名称不能空白'); return; }
+    const arch = getArchives();
+    arch[key] = { data, saved: new Date().toISOString() };
+    try{
+      localStorage.setItem(ARCH_KEY, JSON.stringify(arch));
+      alert('已存档：' + key);
+    }catch(e){
+      alert('存档失败：浏览器空间不足（照片太多时容易发生，可减少照片再试）');
+    }
+  }
+
+  // ---- Load archive from browser localStorage ----
+  const ARCH_KEY = 'car_quotation_archives';
+  function getArchives(){ try{ return JSON.parse(localStorage.getItem(ARCH_KEY)||'{}'); }catch(e){ return {}; } }
+
+  function openLoadArchive(){
+    const arch = getArchives();
+    if(!Object.keys(arch).length){ alert('还没有任何存档'); return; }
+    let modal = document.getElementById('archModal');
+    if(!modal){
+      modal = document.createElement('div');
+      modal.id = 'archModal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:9999;text-transform:none;';
+      modal.innerHTML = '<div id="archBox" style="background:#fff;border-radius:8px;max-width:460px;width:90%;max-height:80vh;overflow:auto;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,.3);"></div>';
+      modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
+      document.body.appendChild(modal);
+    }
+    const box = modal.querySelector('#archBox');
+    box.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><b style="font-size:15px;">读取存档</b><span onclick="document.getElementById(\'archModal\').remove()" style="cursor:pointer;font-size:20px;color:#888;">×</span></div>'
+      + '<input id="archSearch" placeholder="🔍 搜索名字…" oninput="renderArchList(this.value)" style="width:100%;padding:8px 10px;margin-bottom:10px;border:1px solid #ccc;border-radius:6px;font-size:14px;box-sizing:border-box;text-transform:none;">'
+      + '<div id="archList"></div>';
+    renderArchList('');
+    box.querySelector('#archSearch').focus();
+  }
+
+  function renderArchList(q){
+    const arch = getArchives();
+    const keys = Object.keys(arch).filter(k=> k.toLowerCase().includes((q||'').toLowerCase()));
+    const list = document.getElementById('archList');
+    if(!list) return;
+    if(!keys.length){ list.innerHTML = '<div style="color:#999;padding:12px 6px;">没有符合的存档</div>'; return; }
+    // newest first
+    keys.sort((a,b)=> (arch[b].saved||'').localeCompare(arch[a].saved||''));
+    let html = '';
+    keys.forEach(k=>{
+      const when = arch[k].saved ? new Date(arch[k].saved).toLocaleString() : '';
+      const kEsc = k.replace(/'/g,"\\'");
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #eee;">'
+        + '<div style="flex:1;cursor:pointer;" onclick="pickArchive(\''+kEsc+'\')">'
+        + '<div style="font-weight:bold;color:#0f5c8c;">'+k+'</div>'
+        + '<div style="font-size:11px;color:#999;">'+when+'</div></div>'
+        + '<button onclick="delArchive(\''+kEsc+'\')" style="border:none;background:none;color:#c00;cursor:pointer;font-size:16px;padding:4px 8px;">🗑</button>'
+        + '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  function pickArchive(k){
+    const arch = getArchives();
+    if(arch[k]){ applyArchive(arch[k].data); const m=document.getElementById('archModal'); if(m) m.remove(); }
+  }
+
+  function delArchive(k){
+    if(!confirm('删除存档「'+k+'」？')) return;
+    const arch = getArchives();
+    delete arch[k];
+    localStorage.setItem(ARCH_KEY, JSON.stringify(arch));
+    if(Object.keys(arch).length){ const s=document.getElementById('archSearch'); renderArchList(s?s.value:''); }
+    else { const m=document.getElementById('archModal'); if(m) m.remove(); }
+  }
+
+  function applyArchive(data){
+    if(!data || !Array.isArray(data.pages)) { alert('File not valid.'); return; }
+    // remove all quotation pages
+    container.querySelectorAll('.sheet:not(.fixed-page)').forEach(s=> s.remove());
+    // recreate pages
+    data.pages.forEach(p=>{
+      const node = tpl.content.cloneNode(true);
+      container.insertBefore(node, container.querySelector('.fixed-page'));
+      const s = container.querySelectorAll('.sheet:not(.fixed-page)');
+      const sheet = s[s.length-1];
+      // restore inputs in order
+      const inputs = sheet.querySelectorAll('input');
+      let idx = 0;
+      inputs.forEach(i=>{
+        if(i.type === 'file') return;
+        if(p.inputs && idx < p.inputs.length){ i.value = p.inputs[idx]; }
+        idx++;
+      });
+      // restore photos
+      if(p.photos && p.photos.length){
+        const grid = sheet.querySelector('.photo-grid');
+        p.photos.forEach(src=>{
+          const wrap = document.createElement('div');
+          wrap.className = 'photo-thumb';
+          const img = document.createElement('img'); img.src = src;
+          img.onclick = ()=>openLightbox(src);
+          const del = document.createElement('button'); del.className='del'; del.textContent='×';
+          del.onclick = ()=>wrap.remove();
+          wrap.appendChild(img); wrap.appendChild(del); grid.appendChild(wrap);
+        });
+      }
+      // sync Brand/Financing dropdown display from restored text values
+      sheet.querySelectorAll('.q-sel').forEach(sel=>{
+        const txt = sel.parentElement.querySelector('.q-other');
+        if(!txt) return;
+        const val = txt.value;
+        const opts = [...sel.options].map(o=>o.value);
+        if(val && opts.includes(val)){
+          sel.value = val; sel.style.display=''; txt.style.display = 'none';
+        } else if(val){
+          sel.style.display = 'none'; txt.style.display = '';
+        } else {
+          sel.value = ''; sel.style.display=''; txt.style.display = 'none';
+        }
+      });
+    });
+
+    const fp = container.querySelector('.fixed-page');
+    // clear existing dynamic item rows
+    fp.querySelectorAll('.pa-items .addon-row').forEach(r=>r.remove());
+    fp.querySelectorAll('.sum-items .sum-row').forEach(r=>r.remove());
+
+    // fixed lucas/agent
+    if(data.fixed){
+      const lr = fp.querySelector('.addon-row[data-key="lucas2"] .deduct-amt');
+      const ar = fp.querySelector('.addon-row[data-key="agent"] .deduct-amt');
+      if(lr) lr.value = data.fixed.lucas || '';
+      if(ar) ar.value = data.fixed.agent || '';
+    }
+
+    // recreate paired top items
+    const btn = fp.querySelector('.pa-items') && fp; // context
+    (data.items||[]).forEach(it=>{
+      // simulate addItem: create paired rows
+      addItemProgrammatic(fp, it.name, it.amt);
+    });
+    // recreate bottom-only sum items beyond the paired ones
+    const paired = (data.items||[]).length;
+    (data.sumRows||[]).slice(paired).forEach(it=>{
+      addSumItemProgrammatic(fp, it.name, it.amt);
+    });
+    // also set the amounts for paired bottoms if they were edited differently
+    (data.sumRows||[]).slice(0, paired).forEach((it, k)=>{
+      const rows = fp.querySelectorAll('.sum-items .sum-row');
+      if(rows[k]){
+        const a = rows[k].querySelector('.sum-item-amt');
+        if(a && it.amt) { a.value = it.amt; a.dataset.edited='1'; }
+      }
+    });
+
+    renumber();
+    // recompute everything
+    container.querySelectorAll('.cb-total').forEach(cb=> calcCashback(cb));
+    syncMonthly();
+    syncBankTotal();
+    calcFinal(fp.querySelector('.pa-final'));
+    calcSummary(fp.querySelector('.sum-total'));
+  }
+
+  function addItemProgrammatic(fp, nameVal, amtVal){
+    const wrap = fp.querySelector('.pa-items');
+    const row = document.createElement('div');
+    row.className = 'addon-row';
+    const name = document.createElement('input'); name.type='text'; name.className='item-name';
+    const amt = document.createElement('input'); amt.type='text'; amt.className='item-amt addon-amt'; amt.inputMode='decimal';
+    const del = document.createElement('button'); del.className='del-item'; del.textContent='×';
+    const b = makeSumRow(fp);
+    b.amt.addEventListener('input', ()=>{ b.amt.dataset.edited='1'; });
+    name.oninput = ()=>{ b.name.value = name.value; };
+    amt.oninput = ()=>{ if(!b.amt.dataset.edited){ b.amt.value=amt.value; calcSummary(b.amt);} calcFinal(amt); };
+    amt.onblur = ()=>{ fmtMoney(amt); if(!b.amt.dataset.edited){ b.amt.value=amt.value; calcSummary(b.amt);} calcFinal(amt); };
+    const removeBoth = ()=>{ row.remove(); b.row.remove(); calcFinal(fp.querySelector('.pa-final')); calcSummary(fp.querySelector('.sum-total')); };
+    del.onclick = removeBoth; b.del.onclick = removeBoth;
+    row.appendChild(name); row.appendChild(amt); row.appendChild(del);
+    wrap.appendChild(row);
+    name.value = nameVal || ''; b.name.value = nameVal || '';
+    amt.value = amtVal || ''; b.amt.value = amtVal || '';
+  }
+
+  function addSumItemProgrammatic(fp, nameVal, amtVal){
+    const b = makeSumRow(fp);
+    b.del.onclick = ()=>{ b.row.remove(); calcSummary(fp.querySelector('.sum-total')); };
+    b.name.value = nameVal || ''; b.amt.value = amtVal || '';
+  }
+
+  function addPhotos(files, area){
+    const grid = area.querySelector('.photo-grid');
+    [...files].forEach(file=>{
+      if(!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const wrap = document.createElement('div');
+        wrap.className = 'photo-thumb';
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.onclick = ()=>openLightbox(e.target.result);
+        const del = document.createElement('button');
+        del.className = 'del';
+        del.textContent = '×';
+        del.onclick = ()=>wrap.remove();
+        wrap.appendChild(img);
+        wrap.appendChild(del);
+        grid.appendChild(wrap);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function openLightbox(src){
+    let box = document.getElementById('lightbox');
+    if(!box){
+      box = document.createElement('div');
+      box.id = 'lightbox';
+      box.onclick = ()=>box.style.display='none';
+      box.innerHTML = '<img>';
+      document.body.appendChild(box);
+    }
+    box.querySelector('img').src = src;
+    box.style.display = 'flex';
+  }
+
+  // Track which page the cursor is in, so paste goes to the right one
+  let activeArea = null;
+  document.addEventListener('focusin', e=>{
+    const sheet = e.target.closest('.sheet');
+    if(sheet) activeArea = sheet.querySelector('.photo-area');
+  });
+  document.querySelectorAll('.photo-drop, .photo-area').forEach(()=>{});
+  document.addEventListener('mouseover', e=>{
+    const sheet = e.target.closest('.sheet');
+    if(sheet) activeArea = sheet.querySelector('.photo-area');
+  });
+
+  // Paste image anywhere -> goes to the active page
+  document.addEventListener('paste', e=>{
+    const items = e.clipboardData && e.clipboardData.items;
+    if(!items) return;
+    const imgs = [...items].filter(i=>i.type.startsWith('image/')).map(i=>i.getAsFile());
+    if(imgs.length && activeArea){
+      addPhotos(imgs, activeArea);
+      e.preventDefault();
+    }
+  });
+
+  // Drag & drop onto a drop zone
+  document.addEventListener('dragover', e=>{
+    if(e.target.closest('.photo-drop')){ e.preventDefault(); e.target.closest('.photo-drop').classList.add('drag'); }
+  });
+  document.addEventListener('dragleave', e=>{
+    const d = e.target.closest('.photo-drop'); if(d) d.classList.remove('drag');
+  });
+  document.addEventListener('drop', e=>{
+    const d = e.target.closest('.photo-drop');
+    if(d){
+      e.preventDefault();
+      d.classList.remove('drag');
+      addPhotos(e.dataTransfer.files, d.closest('.photo-area'));
+    }
+  });
+
+  addSheet();      // first quotation page
+  addFixedPage();  // cashback breakdown, fixed at the bottom
+  window.__ready = true;
+</script>
+
+</body>
+</html>

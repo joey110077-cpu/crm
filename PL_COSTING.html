@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PL Costing</title>
+<style>
+  :root{
+    --ink:#1a1d24; --muted:#6b7280; --line:#e3e6ec; --bg:#f5f6f8;
+    --accent:#2563a8; --warn:#c0392b; --pos:#1e7a4c; --field:#fbfcfd;
+  }
+  *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI",-apple-system,Roboto,"Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.5;padding:24px;}
+  .sheet{max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(20,25,40,.06);}
+  .head{background:var(--ink);color:#fff;padding:22px 26px;}
+  .head h1{margin:0;font-size:22px;letter-spacing:2px;font-weight:600;}
+  .head p{margin:4px 0 0;font-size:12.5px;color:#aab2c0;letter-spacing:.5px;}
+  .cname{margin-top:12px;width:100%;background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:9px 12px;
+    color:#fff;font-size:16px;font-family:inherit;font-weight:600;letter-spacing:.5px;
+    text-transform:uppercase;}
+  .cname::placeholder{color:#8791a3;font-weight:400;}
+  .cname:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.14);}
+  .cname-print{display:none;}
+  .print-gap{display:none;}
+  .body{padding:14px 26px 4px;}
+  .row.basic{background:#f0f6fc;margin:0 -26px;padding:12px 26px;border-bottom:2px solid var(--accent);}
+  .row.basic label{font-weight:700;}
+  .row.basic input{border-color:var(--accent);font-weight:700;}
+  .row.basic .spacer{width:26px;flex:0 0 auto;}
+  input[readonly]{background:#f4f6f9;color:#333;}
+  .row.item .namew{flex:1;min-width:0;}
+  .row.item input.iname{width:100%;text-align:left;border:1px solid transparent;
+    background:transparent;border-radius:7px;padding:7px 10px;margin-left:-10px;font-size:15px;
+    font-family:inherit;color:var(--ink);font-weight:500;text-transform:uppercase;}
+  .row.item input.iname::placeholder{color:var(--muted);font-weight:400;text-transform:none;}
+  .row.item input.iname:hover{border-color:var(--line);background:var(--field);}
+  .row.item input.iname:focus{outline:none;border-color:var(--accent);background:#fff;
+    box-shadow:0 0 0 3px rgba(37,99,168,.12);}
+  .row.item .del{border:none;background:#fdeceb;color:var(--warn);
+    width:26px;height:26px;border-radius:6px;font-size:16px;line-height:1;
+    cursor:pointer;flex:0 0 auto;padding:0;}
+  .row.item .del:hover{background:#f7d7d4;}
+  .additem{padding:12px 0;border-bottom:1px solid var(--line);}
+  .additem button{background:#eef4fb;color:var(--accent);border:1px dashed var(--accent);
+    border-radius:8px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;
+    font-family:inherit;width:100%;}
+  .additem button:hover{background:#e2edf9;}
+  .row .del{border:none;background:#fdeceb;color:var(--warn);
+    width:26px;height:26px;border-radius:6px;font-size:16px;line-height:1;
+    cursor:pointer;flex:0 0 auto;padding:0;margin-left:2px;}
+  .row .del:hover{background:#f7d7d4;}
+  @media print{ .additem{display:none;} .row .del{display:none;} }
+  .row{display:flex;align-items:center;justify-content:space-between;
+    padding:9px 0;border-bottom:1px solid var(--line);gap:12px;}
+  .row label{font-weight:500;flex:0 0 auto;text-transform:uppercase;}
+  .row .sub{font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;}
+  .row .amt{display:flex;align-items:center;gap:6px;flex:0 0 auto;
+    width:210px;justify-content:flex-end;}
+  .row .amt .cur{color:var(--muted);font-size:13px;flex:0 0 auto;
+    width:24px;text-align:left;}
+  .row .amt input[type=text]{flex:1 1 auto;width:auto;min-width:0;
+    font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+  .row .amt .del,.row .amt .spacer{flex:0 0 auto;}
+  .amt{display:flex;align-items:center;gap:6px;}
+  .amt .cur{color:var(--muted);font-size:13px;}
+  input[type=text]{border:1px solid var(--line);background:var(--field);
+    border-radius:7px;padding:7px 10px;width:150px;text-align:right;
+    font-size:15px;font-family:inherit;color:var(--ink);}
+  input[type=text]:focus{outline:none;border-color:var(--accent);
+    background:#fff;box-shadow:0 0 0 3px rgba(37,99,168,.12);}
+  .row.subrow{padding:6px 0;border-bottom:1px dashed var(--line);}
+  .row.subrow .sublbl{font-size:13px;color:var(--muted);font-weight:500;text-transform:none;}
+  .row.subrow input{color:var(--muted);}
+  .row.subrow input::placeholder{color:#c3c8d2;}
+  .calc-link{font-size:11px;color:var(--accent);text-decoration:none;
+    border:1px solid var(--accent);border-radius:5px;padding:1px 6px;margin-left:6px;
+    white-space:nowrap;font-weight:600;}
+  .calc-link:hover{background:#eef4fb;}
+  @media print{ .calc-link{display:none;} }
+  .total{background:#f0f6fc;padding:14px 26px;display:flex;
+    align-items:center;justify-content:space-between;border-top:2px solid var(--ink);}
+  .total .lbl{font-size:17px;font-weight:700;letter-spacing:1px;}
+  .total .val{font-size:22px;font-weight:700;color:var(--accent);}
+  .strip{padding:14px 26px;border-top:1px solid var(--line);
+    display:flex;gap:20px;flex-wrap:wrap;}
+  .strip .cell{flex:1;min-width:160px;display:flex;align-items:center;
+    justify-content:space-between;gap:10px;}
+  .strip .cell span{font-size:12px;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.6px;font-weight:600;flex:0 0 auto;}
+  .strip .cell .amt{flex:0 0 auto;}
+  .strip .cell #fpct{width:70px;}
+  .est{margin:14px 26px 4px;background:#fff8e6;border:1px dashed #d9a441;
+    border-radius:9px;padding:12px 14px;text-align:center;font-weight:600;color:#8a5a00;}
+  .est span{font-size:12px;color:#b07a1a;display:block;font-weight:600;margin-bottom:8px;
+    text-transform:uppercase;letter-spacing:.6px;}
+  .est-line{display:inline-flex;align-items:baseline;justify-content:center;gap:4px;
+    background:#fff;border:1px solid #e6c98a;border-radius:999px;padding:8px 18px;
+    box-shadow:0 1px 3px rgba(138,90,0,.08);}
+  .est-fx{font-size:17px;font-weight:700;color:#8a5a00;}
+  .est input{border:none;background:transparent;text-align:center;
+    font-size:19px;font-weight:700;color:#8a5a00;width:auto;letter-spacing:.5px;}
+  .est input::placeholder{color:#d4b57a;font-weight:600;}
+  .est input:focus{outline:none;}
+  .remarks{margin:6px 26px 22px;background:#fdf0ef;border:1px solid #f0c9c5;
+    border-radius:9px;padding:14px 16px;}
+  .remarks .rtitle{color:var(--warn);font-weight:700;font-size:13.5px;
+    letter-spacing:.5px;margin-bottom:8px;}
+  .remarks ul{margin:0;padding-left:18px;}
+  .remarks li{font-size:13px;color:#5a2320;margin-bottom:7px;line-height:1.55;}
+  .remarks li.warn{list-style:none;margin-left:-18px;color:var(--warn);font-weight:600;}
+  .remarks li.edit{display:flex;align-items:flex-start;gap:6px;}
+  .remarks li.edit textarea{flex:1;border:1px solid #f0c9c5;background:#fff;
+    border-radius:6px;padding:5px 8px;font-size:13px;font-family:inherit;color:#5a2320;
+    line-height:1.5;resize:vertical;min-height:24px;}
+  .remarks li.edit textarea:focus{outline:none;border-color:var(--warn);}
+  .remarks li.edit .del{border:none;background:#fdeceb;color:var(--warn);
+    width:24px;height:24px;border-radius:6px;font-size:15px;line-height:1;cursor:pointer;
+    flex:0 0 auto;padding:0;}
+  .rmk-add{border-bottom:none;padding:8px 0 0;}
+  .rmk-add button{background:#fdf0ef;color:var(--warn);border-color:#e0a39d;}
+  .rmk-add button:hover{background:#f9e3e1;}
+  @media print{ .rmk-add{display:none;} .remarks li.edit .del{display:none;}
+    .remarks li.edit textarea{border:none;background:transparent;padding:0;} }
+  .bar{max-width:640px;margin:16px auto 0;display:flex;gap:10px;justify-content:flex-end;}
+  button{border:none;border-radius:8px;padding:10px 18px;font-size:14px;
+    font-weight:600;cursor:pointer;font-family:inherit;}
+  .btn-print{background:var(--accent);color:#fff;}
+  .btn-copy{background:#1e7a4c;color:#fff;}
+  .btn-reset{background:#eceef2;color:var(--ink);}
+  .btn-save{background:#8a5a00;color:#fff;}
+  .btn-load{background:#d9a441;color:#fff;}
+  button:hover{opacity:.9;}
+  .modal-back{display:none;position:fixed;inset:0;background:rgba(20,25,40,.5);
+    z-index:100;align-items:center;justify-content:center;padding:20px;}
+  .modal-back.open{display:flex;}
+  .modal{background:#fff;border-radius:12px;max-width:460px;width:100%;
+    max-height:80vh;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 12px 48px rgba(20,25,40,.3);}
+  .modal-head{background:var(--ink);color:#fff;padding:16px 20px;display:flex;
+    align-items:center;justify-content:space-between;font-size:16px;font-weight:600;letter-spacing:1px;}
+  .modal-x{background:rgba(255,255,255,.15);color:#fff;border:none;width:28px;height:28px;
+    border-radius:6px;font-size:18px;line-height:1;cursor:pointer;padding:0;}
+  .modal-x:hover{background:rgba(255,255,255,.28);}
+  .modal-list{overflow-y:auto;padding:8px;}
+  .arc-item{display:flex;align-items:center;gap:10px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:9px;margin-bottom:8px;}
+  .arc-item:hover{background:var(--field);border-color:var(--accent);}
+  .arc-info{flex:1;min-width:0;cursor:pointer;}
+  .arc-name{font-weight:700;font-size:15px;color:var(--ink);text-transform:uppercase;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .arc-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+  .arc-load{background:var(--accent);color:#fff;border:none;border-radius:6px;
+    padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;flex:0 0 auto;}
+  .arc-del{background:#fdeceb;color:var(--warn);border:none;width:32px;height:32px;
+    border-radius:6px;font-size:17px;line-height:1;cursor:pointer;flex:0 0 auto;padding:0;}
+  .arc-del:hover{background:#f7d7d4;}
+  .arc-empty{text-align:center;color:var(--muted);padding:30px 14px;font-size:14px;}
+  @media print{ .modal-back{display:none!important;} }
+  @media print{
+    @page{ size:A4; margin:8mm; }
+    .no-print, #taxrow{ display:none!important; }
+    .print-gap{ display:block!important; height:18px; }
+    html,body{width:210mm;}
+    body{background:#fff;padding:0;font-size:12px;line-height:1.32;}
+    .sheet{border:none;box-shadow:none;border-radius:0;max-width:100%;}
+    .bar{display:none;}
+    input{border-color:transparent!important;background:transparent!important;
+      box-shadow:none!important;-webkit-appearance:none;appearance:none;}
+    .row,.strip .cell{page-break-inside:avoid;}
+    .remarks,.est{page-break-inside:avoid;}
+    .row .amt input{text-align:right;}
+    .row .amt .spacer{display:none;}
+    .row .amt{width:184px;}
+    .cname{display:none!important;}
+    .cname-print{display:block;margin-top:10px;color:#fff;font-size:26px;
+      font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+    .cname-print:empty{display:none;margin:0;}
+    .head{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:12px 22px;}
+    .head h1{font-size:18px;}
+    .head p{font-size:11px;margin-top:2px;}
+    .body{padding:6px 22px 2px;}
+    .row{padding:4px 0;}
+    .row.basic{padding:6px 22px;margin:0 -22px;}
+    input[type=text]{padding:3px 8px;font-size:12px;}
+    .row.item input.iname{padding:3px 8px;font-size:12px;}
+    .total{padding:8px 22px;}
+    .total .lbl{font-size:14px;}
+    .total .val{font-size:17px;}
+    .strip{padding:8px 22px;}
+    .est{margin:8px 22px 2px;padding:8px 12px;}
+    .est span{margin-bottom:5px;}
+    .est-line{padding:5px 14px;}
+    .est input{font-size:16px;}
+    .remarks{margin:6px 22px 10px;padding:9px 12px;}
+    .remarks li{margin-bottom:4px;line-height:1.4;font-size:11.5px;}
+    .remarks .rtitle{margin-bottom:5px;}
+  }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <div class="head">
+      <h1>PL COSTING</h1>
+      <input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="cname" class="cname" placeholder="客户姓名 / Name">
+      <div id="cname-print" class="cname-print"></div>
+    </div>
+
+    <div class="body">
+      <div class="row basic">
+        <label>DSR <span class="sub">现有供期</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="dsr" inputmode="decimal" placeholder="输入 DSR"><span class="spacer"></span></div>
+      </div>
+      <div class="row basic no-print">
+        <label>要剩下 <span class="sub">供新贷款空间</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="wantleft" inputmode="decimal" placeholder="输入金额" value="3500"><span class="spacer"></span></div>
+      </div>
+      <div class="print-gap" aria-hidden="true"></div>
+      <div class="row basic">
+        <label>Basic Salary <span class="sub">月薪 · 自动</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="basic" inputmode="decimal" placeholder="自动或手动输入"><span class="spacer"></span></div>
+      </div>
+      <div class="row subrow no-print">
+        <label class="sublbl">↳ Net Salary <span class="sub">basic 扣除后 · 自动</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="net" inputmode="decimal" placeholder="自动" readonly><span class="spacer"></span></div>
+      </div>
+      <div class="row subrow no-print">
+        <label class="sublbl">↳ 剩余余额 <span class="sub">Net×70% − DSR · 自动</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="dsrleft" inputmode="decimal" placeholder="自动" readonly><span class="spacer"></span></div>
+      </div>
+      <div class="row fixed">
+        <label>EPF <span class="sub">雇主+雇员 · × 3个月</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="ded" id="epf" inputmode="decimal" readonly><button type="button" class="del" title="删除" onclick="delRow(this)">×</button></div>
+      </div>
+      <div class="row fixed">
+        <label>PCB <span class="sub">SOCSO+EIS+Tax · × 3个月</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="ded" id="pcb" inputmode="decimal" readonly><button type="button" class="del" title="删除" onclick="delRow(this)">×</button></div>
+      </div>
+      <div class="row subrow" id="taxrow">
+        <label class="sublbl">↳ Tax <a class="calc-link" href="https://payroll.my/" target="_blank" rel="noopener">PCB 计算器 ↗</a></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="taxin" inputmode="decimal" placeholder="自动"><span class="spacer"></span></div>
+      </div>
+      <div id="items"></div>
+      <div class="additem">
+        <button type="button" onclick="addItem()">＋ Add Item</button>
+      </div>
+      <div class="row fixed">
+        <label>Legal</label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="ded" inputmode="decimal" value="800.00" readonly><button type="button" class="del" title="删除" onclick="delRow(this)">×</button></div>
+      </div>
+      <div class="row fixed">
+        <label>Majikan <span class="sub">雇主</span></label>
+        <div class="amt"><span class="cur">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="ded" inputmode="decimal"><button type="button" class="del" title="删除" onclick="delRow(this)">×</button></div>
+      </div>
+    </div>
+
+    <div class="total">
+      <span class="lbl">TOTAL</span>
+      <span class="val" id="total">RM 0.00</span>
+    </div>
+
+    <div class="strip">
+      <div class="cell">
+        <span>F — per month</span>
+        <div class="amt"><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="fpct" value="10"><span class="cur">%</span></div>
+      </div>
+    </div>
+
+    <div class="est">
+      <span>ESTIMATE LOAN SIZE</span>
+      <div class="est-line"><span class="est-fx">RM</span><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="estimate" value="" size="6" oninput="this.size=Math.max(4,this.value.length||4)"><span class="est-fx">K</span></div>
+    </div>
+
+    <div class="remarks">
+      <div class="rtitle">⚠️ REMARKS</div>
+      <ul>
+        <li>一般 case 在 3–4 个月后交。交 case 期间不鼓励也不建议顾客出国，顾客配合顺利的流程才能批美美的 loan amount。</li>
+        <li>全部东西都要准时还，不可以有 late payment。</li>
+      </ul>
+      <ul id="rmk-extra"></ul>
+      <div class="additem rmk-add">
+        <button type="button" onclick="addRemark()">＋ Add Item</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="btn-reset" onclick="resetAll()">重置</button>
+    <button class="btn-save" onclick="saveArchive()">存档</button>
+    <button class="btn-load" onclick="openArchive()">读取</button>
+    <button class="btn-copy" onclick="copyText(this)">复制文字</button>
+    <button class="btn-print" onclick="printPDF()">打印 / 存 PDF</button>
+  </div>
+
+  <div id="archive-modal" class="modal-back">
+    <div class="modal">
+      <div class="modal-head">
+        <span>存档列表</span>
+        <button type="button" class="modal-x" onclick="closeArchive()">×</button>
+      </div>
+      <div id="archive-list" class="modal-list"></div>
+    </div>
+  </div>
+
+<script>
+  const num = v => parseFloat((v||'').toString().replace(/[^0-9.]/g,''))||0;
+  const fmt = n => n.toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const money = n => 'RM ' + fmt(n);
+
+  // ---- Monthly statutory (Category 1, under 60) ----
+  // EPF: employee 11%, employer 13% (fixed)
+  function epfER(s){ return s*0.13; }
+  function epfEE(s){ return s*0.11; }
+
+  // SOCSO Cat 1 — official banded table (Third Schedule, Act 4). Ceiling RM6000.
+  // Midpoint × rate; SKBBK / Lindung 24 Jam (0.75%, employee-only, from Jun 2026) added to employee share.
+  function socsoMid(s){
+    if(s<=0) return 0;
+    if(s<=50) return 25;
+    const lo = Math.floor((s-0.01)/100)*100;
+    return lo + 50;
+  }
+  // Employer: Employment Injury 1.75%. Ceiling er = 104.15
+  function socsoER(s){ if(s<=0) return 0; if(s>=6000) return 104.15; return +(socsoMid(s)*0.0175).toFixed(2); }
+  // Employee: Invalidity 0.5% + SKBBK 0.75% = 1.25%. Ceiling ee = 29.75 + 44.65 = 74.40
+  function socsoEE(s){ if(s<=0) return 0; if(s>=6000) return 74.40; return +(socsoMid(s)*0.0125).toFixed(2); }
+
+  // EIS — official banded table (ceiling RM6000). Midpoint × 0.2% each; ceiling 11.90 each.
+  function eisER(s){ if(s<=0) return 0; if(s>=6000) return 11.90; return +(socsoMid(s)*0.002).toFixed(2); }
+  function eisEE(s){ if(s<=0) return 0; if(s>=6000) return 11.90; return +(socsoMid(s)*0.002).toFixed(2); }
+
+  // (EIS defined above with SOCSO midpoint method)
+
+  // PCB / income tax (MTD) monthly estimate — single, no dependents
+  function taxEE(s){
+    const annualEPF = Math.min(s*12*0.11, 4000);
+    const chargeable = s*12 - 9000 - annualEPF;
+    let tax = 0;
+    const bands = [
+      [5000,0],[15000,0.01],[15000,0.03],[15000,0.06],
+      [20000,0.11],[30000,0.19],[300000,0.25]
+    ];
+    let rem = chargeable;
+    for(const [width,rate] of bands){
+      if(rem<=0) break;
+      const slice = Math.min(rem,width);
+      tax += slice*rate;
+      rem -= slice;
+    }
+    if(rem>0) tax += rem*0.26;
+    return Math.max(tax,0)/12;
+  }
+
+  const $ = id => document.getElementById(id);
+
+  function calc(){
+    const s = num($('basic').value);
+    const epf = epfER(s) + epfEE(s);
+    const soc = socsoER(s) + socsoEE(s);
+    const eis = eisER(s) + eisEE(s);
+    const taxEst = taxEE(s);
+    // show estimate as placeholder on the tax field
+    if($('taxin')) $('taxin').placeholder = s>0 ? fmt(taxEst) : '自动';
+    // use manual tax if user typed one, else the estimate
+    const manual = $('taxin') ? $('taxin').value.trim() : '';
+    const tax = manual!=='' ? num(manual) : taxEst;
+    if($('epf')) $('epf').value = fmt(epf*3);
+    if($('pcb')) $('pcb').value = fmt((soc+eis+tax)*3);
+    let t=0;
+    document.querySelectorAll('.ded').forEach(i=>t+=num(i.value));
+    $('total').textContent = money(t);
+  }
+
+  $('taxin').addEventListener('input',calc);
+  $('taxin').addEventListener('blur',function(){ if(this.value.trim()!=='') this.value=fmt(num(this.value)); calc(); });
+
+  // 从目标 net 二分反解 basic salary(tax 累进,无法直接除)
+  function netOf(s){ return s - (epfEE(s) + socsoEE(s) + eisEE(s) + taxEE(s)); }
+  function dsr70(s){ return netOf(s)*0.70; }
+  // 找让 Net×70% ≥ target 的最小 basic,再向上凑到百位
+  function basicForDSR(target){
+    let lo=0, hi=500000;
+    for(let i=0;i<80;i++){ const mid=(lo+hi)/2; if(dsr70(mid)<target) lo=mid; else hi=mid; }
+    return Math.ceil(((lo+hi)/2)/100)*100;
+  }
+  function dsrToBasic(){
+    const d = num($('dsr').value);
+    const want = num($('wantleft').value);
+    if(d>0 || want>0){
+      const target = d + want;              // Net×70% 要盖过 DSR + 要剩下的
+      const basic = basicForDSR(target);
+      const net = netOf(basic);
+      $('basic').value = fmt(basic);
+      $('net').value = fmt(net);
+      $('dsrleft').value = fmt(net*0.70 - d);
+    } else {
+      $('basic').value = '';
+      $('net').value = '';
+      $('dsrleft').value = '';
+    }
+    calc();
+  }
+  $('dsr').addEventListener('input',dsrToBasic);
+  $('dsr').addEventListener('blur',function(){ if(this.value.trim()!=='') this.value=fmt(num(this.value)); dsrToBasic(); });
+  $('wantleft').addEventListener('input',dsrToBasic);
+  $('wantleft').addEventListener('blur',function(){ if(this.value.trim()!=='') this.value=fmt(num(this.value)); dsrToBasic(); });
+
+  // 手动改 basic:用输入的 basic 算 net/剩余,不反推
+  function basicManual(){
+    const b = num($('basic').value);
+    const d = num($('dsr').value);
+    if(b>0){
+      const net = netOf(b);
+      $('net').value = fmt(net);
+      $('dsrleft').value = fmt(net*0.70 - d);
+    } else {
+      $('net').value = '';
+      $('dsrleft').value = '';
+    }
+    calc();
+  }
+  $('basic').addEventListener('input',basicManual);
+  $('basic').addEventListener('blur',function(){ if(this.value.trim()!=='') this.value=fmt(num(this.value)); basicManual(); });
+
+  document.querySelectorAll('.ded:not([readonly]), #fpct').forEach(i=>i.addEventListener('input',calc));
+  // format every editable amount field to 2 decimals on blur
+  document.querySelectorAll('.ded:not([readonly])').forEach(i=>{
+    i.addEventListener('blur',function(){ if(this.value.trim()!=='') this.value=fmt(num(this.value)); calc(); });
+  });
+
+  document.getElementById('cname').addEventListener('input',function(){
+    this.value = this.value.toUpperCase();
+    document.getElementById('cname-print').textContent = this.value.trim();
+  });
+  function delRow(btn){
+    btn.closest('.row').remove();
+    calc();
+  }
+  function addRemark(){
+    const ul = document.getElementById('rmk-extra');
+    const li = document.createElement('li');
+    li.className = 'edit';
+    li.innerHTML = '<textarea rows="1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="输入备注..."></textarea>'+
+      '<button type="button" class="del" title="删除">×</button>';
+    ul.appendChild(li);
+    const ta = li.querySelector('textarea');
+    const grow = ()=>{ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; };
+    ta.addEventListener('input',grow);
+    li.querySelector('.del').addEventListener('click',()=>li.remove());
+    ta.focus();
+  }
+  function addItem(name){
+    const wrap = document.getElementById('items');
+    const row = document.createElement('div');
+    row.className = 'row item';
+    row.innerHTML =
+      '<div class="namew"><input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="iname" placeholder="项目名称"></div>'+
+      '<div class="amt"><span class="cur">RM</span>'+
+      '<input type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="ded" inputmode="decimal">'+
+      '<button type="button" class="del" title="删除">×</button></div>';
+    wrap.appendChild(row);
+    if(name) row.querySelector('.iname').value = name;
+    row.querySelector('.iname').addEventListener('input',function(){ this.value=this.value.toUpperCase(); });
+    row.querySelector('.ded').addEventListener('input',calc);
+    row.querySelector('.ded').addEventListener('blur',function(){ if(this.value.trim()!=='') this.value=fmt(num(this.value)); calc(); });
+    row.querySelector('.del').addEventListener('click',()=>{ row.remove(); calc(); });
+    row.querySelector('.iname').focus();
+    calc();
+  }
+  function resetAll(){
+    $('dsr').value='';
+    $('wantleft').value='3500';
+    $('basic').value='';
+    $('net').value='';
+    $('dsrleft').value='';
+    document.getElementById('items').innerHTML='';
+    document.querySelectorAll('.ded').forEach(i=>{ if(!i.readOnly) i.value=''; });
+    if($('taxin')) $('taxin').value='';
+    document.getElementById('fpct').value='10';
+    document.getElementById('cname').value='';
+    document.getElementById('cname-print').textContent='';
+    document.getElementById('estimate').value='';
+    document.getElementById('rmk-extra').innerHTML='';
+    calc();
+  }
+
+  function rowLabel(row){
+    const l = row.querySelector('label');
+    if(l){ const c=l.cloneNode(true); const s=c.querySelector('.sub'); if(s)s.remove();
+      return c.textContent.trim().toUpperCase(); }
+    const n = row.querySelector('.iname');
+    return n ? (n.value.trim()||'ITEM').toUpperCase() : 'ITEM';
+  }
+  function rowVal(row){
+    const inp = row.querySelector('.ded');
+    if(!inp) return '';
+    return inp.value.trim() ? 'RM ' + inp.value.trim() : '';
+  }
+  function copyText(btn){
+    const name = (document.getElementById('cname').value.trim()||'XXXXX').toUpperCase();
+    let L = [];
+    L.push('*' + name + ' PL COSTING*');
+    L.push('');
+    const bs = document.getElementById('basic').value.trim();
+    if(bs) L.push('BASIC SALARY : RM ' + bs);
+    L.push('');
+    document.querySelectorAll('.body .row').forEach(row=>{
+      if(row.classList.contains('basic')) return;
+      if(row.classList.contains('subrow')) return;
+      L.push(rowLabel(row) + ': ' + rowVal(row));
+    });
+    L.push('');
+    L.push('TOTAL : ' + document.getElementById('total').textContent);
+    L.push('');
+    L.push('F : per months ' + (document.getElementById('fpct').value.trim()||'0') + '%');
+    L.push('');
+    const est = document.getElementById('estimate').value.trim();
+    L.push('*ESTIMATE LOAN SIZE: ' + (est ? 'RM '+est+'K' : 'RM ___ - ___K') + '*');
+    L.push('');
+    L.push('*REMARKS:*⚠️⚠️⚠️⚠️⚠️');
+    document.querySelectorAll('.remarks > ul > li').forEach(li=>{
+      const t = (li.querySelector('textarea') ? li.querySelector('textarea').value : li.textContent).trim();
+      if(t) L.push('- ' + t);
+    });
+    const text = L.join('\n');
+    const done=()=>{ const old=btn.textContent; btn.textContent='已复制 ✓'; setTimeout(()=>btn.textContent=old,1500); };
+    navigator.clipboard.writeText(text).then(done).catch(()=>{
+      const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta);
+      ta.select(); try{document.execCommand('copy');}catch(e){} ta.remove(); done();
+    });
+  }
+
+  function printPDF(){
+    document.querySelectorAll('.ded:not([readonly])').forEach(i=>{ if(i.value.trim()!=='') i.value=fmt(num(i.value)); });
+    if($('basic').value.trim()!=='') $('basic').value=fmt(num($('basic').value));
+    if($('taxin') && $('taxin').value.trim()!=='') $('taxin').value=fmt(num($('taxin').value));
+    calc();
+    const name = (document.getElementById('cname').value.trim()||'XXXX').toUpperCase();
+    const orig = document.title;
+    document.title = 'PL - ' + name;
+    window.print();
+    setTimeout(()=>{ document.title = orig; }, 500);
+  }
+
+  // ==== 存档 / 读取 ====
+  const ARC_KEY = 'plcosting_archives';
+
+  function loadArchives(){
+    try{ return JSON.parse(localStorage.getItem(ARC_KEY)||'[]'); }catch(e){ return []; }
+  }
+  function storeArchives(a){
+    try{ localStorage.setItem(ARC_KEY, JSON.stringify(a)); return true; }
+    catch(e){ alert('无法存档:浏览器存储空间已满或被禁用。'); return false; }
+  }
+
+  // 收集整张表的当前状态
+  function collectState(){
+    const items = [];
+    document.querySelectorAll('#items .row.item').forEach(row=>{
+      items.push({
+        name: row.querySelector('.iname').value,
+        val:  row.querySelector('.ded').value
+      });
+    });
+    const remarks = [];
+    document.querySelectorAll('#rmk-extra > li textarea').forEach(t=>remarks.push(t.value));
+    // majikan 是固定行里唯一可编辑的 .ded(没有 id),抓最后一个可编辑 .ded
+    const editableDed = [...document.querySelectorAll('.ded:not([readonly])')];
+    const majikan = editableDed.length ? editableDed[editableDed.length-1].value : '';
+    return {
+      cname: $('cname').value,
+      dsr: $('dsr').value,
+      wantleft: $('wantleft').value,
+      basic: $('basic').value,
+      taxin: $('taxin') ? $('taxin').value : '',
+      fpct: $('fpct').value,
+      estimate: $('estimate').value,
+      majikan: majikan,
+      items: items,
+      remarks: remarks
+    };
+  }
+
+  // 把状态套回表上
+  function applyState(s){
+    resetAll();
+    $('cname').value = (s.cname||'').toUpperCase();
+    $('cname-print').textContent = $('cname').value.trim();
+    $('dsr').value = s.dsr||'';
+    $('wantleft').value = s.wantleft||'3500';
+    $('basic').value = s.basic||'';
+    if($('taxin')) $('taxin').value = s.taxin||'';
+    $('fpct').value = s.fpct||'10';
+    $('estimate').value = s.estimate||'';
+    $('estimate').size = Math.max(4,($('estimate').value.length)||4);
+    (s.items||[]).forEach(it=>{
+      addItem(it.name||'');
+      const rows = document.querySelectorAll('#items .row.item');
+      const last = rows[rows.length-1];
+      last.querySelector('.ded').value = it.val||'';
+    });
+    (s.remarks||[]).forEach(txt=>{
+      addRemark();
+      const tas = document.querySelectorAll('#rmk-extra > li textarea');
+      const ta = tas[tas.length-1];
+      ta.value = txt||'';
+      ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px';
+    });
+    // 套回 basic 的自动计算,再套回 majikan(避免被覆盖)
+    if(s.basic) basicManual();
+    const editableDed = [...document.querySelectorAll('.ded:not([readonly])')];
+    if(editableDed.length && s.majikan!==undefined){
+      editableDed[editableDed.length-1].value = s.majikan||'';
+    }
+    calc();
+  }
+
+  function saveArchive(){
+    const name = ($('cname').value.trim()||'').toUpperCase();
+    if(!name){ alert('请先填写客户姓名再存档。'); $('cname').focus(); return; }
+    const arcs = loadArchives();
+    const state = collectState();
+    const now = new Date();
+    const stamp = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+
+      String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+
+      String(now.getMinutes()).padStart(2,'0');
+    const existing = arcs.findIndex(a=>a.name===name);
+    const entry = { name:name, time:stamp, total:$('total').textContent, data:state };
+    if(existing>=0){
+      if(!confirm('已有 "'+name+'" 的存档,要覆盖吗?')) return;
+      arcs[existing] = entry;
+    } else {
+      arcs.unshift(entry);
+    }
+    if(storeArchives(arcs)) flash('已存档 ✓');
+  }
+
+  function flash(msg){
+    const b = document.querySelector('.btn-save');
+    const old = b.textContent; b.textContent = msg;
+    setTimeout(()=>b.textContent=old,1500);
+  }
+
+  function openArchive(){
+    renderArchives();
+    $('archive-modal').classList.add('open');
+  }
+  function closeArchive(){ $('archive-modal').classList.remove('open'); }
+
+  function renderArchives(){
+    const arcs = loadArchives();
+    const box = $('archive-list');
+    box.innerHTML = '';
+    if(!arcs.length){
+      box.innerHTML = '<div class="arc-empty">还没有存档。<br>填写好资料后按「存档」即可保存。</div>';
+      return;
+    }
+    arcs.forEach((a,i)=>{
+      const el = document.createElement('div');
+      el.className = 'arc-item';
+      el.innerHTML =
+        '<div class="arc-info">'+
+          '<div class="arc-name"></div>'+
+          '<div class="arc-meta"></div>'+
+        '</div>'+
+        '<button type="button" class="arc-load">读取</button>'+
+        '<button type="button" class="arc-del" title="删除">×</button>';
+      el.querySelector('.arc-name').textContent = a.name;
+      el.querySelector('.arc-meta').textContent = a.time + ' · ' + (a.total||'');
+      const doLoad = ()=>{ applyState(a.data); closeArchive(); };
+      el.querySelector('.arc-info').addEventListener('click',doLoad);
+      el.querySelector('.arc-load').addEventListener('click',doLoad);
+      el.querySelector('.arc-del').addEventListener('click',()=>{
+        if(!confirm('删除 "'+a.name+'" 的存档?')) return;
+        const cur = loadArchives();
+        cur.splice(i,1);
+        storeArchives(cur);
+        renderArchives();
+      });
+      box.appendChild(el);
+    });
+  }
+
+  $('archive-modal').addEventListener('click',function(e){
+    if(e.target===this) closeArchive();
+  });
+
+  calc();
+</script>
+</body>
+</html>
