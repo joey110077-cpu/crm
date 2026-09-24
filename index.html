@@ -3916,12 +3916,16 @@ function LoanBlock({
   }, "No banks yet — tap Add Bank"), banks.map((b, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
     style: S.bankInlineRow
-  }, /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("select", {
     style: S.bankInput,
-    placeholder: "Bank",
     value: b.bank,
     onChange: e => setBank(i, "bank", e.target.value)
-  }), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Select Bank"), BANK_COLS.map(bk => /*#__PURE__*/React.createElement("option", {
+    key: bk,
+    value: bk
+  }, bk))), /*#__PURE__*/React.createElement("input", {
     style: S.bankInput,
     placeholder: "Officer",
     value: b.officer,
