@@ -696,32 +696,6 @@ const NAV = [{
   id: "banker",
   label: "Banker",
   icon: Phone
-}, {
-  id: "payslip",
-  label: "Payslip",
-  icon: Folder
-}];
-const PAYSLIP_TOOLS = [{
-  name: "Amazing Leader",
-  url: "https://docs.google.com/spreadsheets/d/1_Y4ULAmKR16-DSY3HxIwlSXR1aUL6DpC/edit?usp=drive_link"
-}, {
-  name: "DCF Car Care",
-  url: "https://docs.google.com/spreadsheets/d/120HPWEEIOQceWt7zVnwpmNWClYhdt400/edit?usp=drive_link"
-}, {
-  name: "Elite Thrivers",
-  url: "https://docs.google.com/document/d/1yCL1KzH6_vC-KxeOKxIVBjlufJoo0_Np/edit?usp=drive_link"
-}, {
-  name: "Subur Setiamas",
-  url: "https://docs.google.com/spreadsheets/d/1TTfeQFFkZDrf0_lcw3mvKb5vAsMBIA5R/edit?usp=drive_link"
-}, {
-  name: "Swift Genius",
-  url: "https://docs.google.com/spreadsheets/d/1mYd50nx3d7e8jYtOzdcD59R1pvouXxFa/edit?usp=drive_link"
-}, {
-  name: "Tereno",
-  url: "https://docs.google.com/spreadsheets/d/11Vt46xvwqo3cyqvE5DR2Tj35F2lUwWzn/edit?usp=drive_link"
-}, {
-  name: "Turbo Solution",
-  url: "https://docs.google.com/spreadsheets/d/1wW5whLSYsqXepJBcCvlFmtmIOuA0uXVM/edit?usp=drive_link"
 }];
 const HTML_TOOLS = [{
   name: "Application Form",
@@ -750,6 +724,27 @@ const HTML_TOOLS = [{
 }, {
   name: "PL Costing",
   file: "PL_COSTING.html"
+}, {
+  name: "Payslip · Amazing Leader",
+  url: "https://docs.google.com/spreadsheets/d/1_Y4ULAmKR16-DSY3HxIwlSXR1aUL6DpC/edit?usp=drive_link"
+}, {
+  name: "Payslip · DCF Car Care",
+  url: "https://docs.google.com/spreadsheets/d/120HPWEEIOQceWt7zVnwpmNWClYhdt400/edit?usp=drive_link"
+}, {
+  name: "Payslip · Elite Thrivers",
+  url: "https://docs.google.com/document/d/1yCL1KzH6_vC-KxeOKxIVBjlufJoo0_Np/edit?usp=drive_link"
+}, {
+  name: "Payslip · Subur Setiamas",
+  url: "https://docs.google.com/spreadsheets/d/1TTfeQFFkZDrf0_lcw3mvKb5vAsMBIA5R/edit?usp=drive_link"
+}, {
+  name: "Payslip · Swift Genius",
+  url: "https://docs.google.com/spreadsheets/d/1mYd50nx3d7e8jYtOzdcD59R1pvouXxFa/edit?usp=drive_link"
+}, {
+  name: "Payslip · Tereno",
+  url: "https://docs.google.com/spreadsheets/d/11Vt46xvwqo3cyqvE5DR2Tj35F2lUwWzn/edit?usp=drive_link"
+}, {
+  name: "Payslip · Turbo Solution",
+  url: "https://docs.google.com/spreadsheets/d/1wW5whLSYsqXepJBcCvlFmtmIOuA0uXVM/edit?usp=drive_link"
 }];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const money = n => n ? "RM " + Number(n).toLocaleString() : "—";
@@ -2224,9 +2219,6 @@ function CRM({ onLogout, currentUser }) {
   }) : page === "html" ? /*#__PURE__*/React.createElement(HtmlToolsPage, null) : page === "banker" ? /*#__PURE__*/React.createElement(BankerPage, {
     bankers: bankers,
     onSave: persistBankers
-  }) : page === "payslip" ? /*#__PURE__*/React.createElement(LinkListPage, {
-    title: "Payslip Format",
-    tools: PAYSLIP_TOOLS
   }) : /*#__PURE__*/React.createElement(TypePage, {
     type: page,
     clients: clients,
@@ -2542,8 +2534,8 @@ function HtmlToolsPage() {
       gap: 14
     }
   }, HTML_TOOLS.map(t => /*#__PURE__*/React.createElement("a", {
-    key: t.file,
-    href: t.file,
+    key: t.url || t.file,
+    href: t.url || t.file,
     target: "_blank",
     rel: "noopener",
     style: {
