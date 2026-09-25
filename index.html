@@ -691,13 +691,26 @@ const NAV = [{
 }, {
   id: "html",
   label: "HTML",
-  icon: Folder
+  icon: Folder,
+  children: [{
+    id: "html_forms",
+    label: "Forms",
+    icon: Folder
+  }, {
+    id: "html_payslip",
+    label: "Payslip",
+    icon: Folder
+  }, {
+    id: "html_offer",
+    label: "Offer",
+    icon: Folder
+  }]
 }, {
   id: "banker",
   label: "Banker",
   icon: Phone
 }];
-const HTML_TOOLS = [{
+const FORMS_TOOLS = [{
   name: "Application Form",
   file: "APPLICATION_FORM.html"
 }, {
@@ -724,28 +737,30 @@ const HTML_TOOLS = [{
 }, {
   name: "PL Costing",
   file: "PL_COSTING.html"
-}, {
-  name: "Payslip · Amazing Leader",
+}];
+const PAYSLIP_TOOLS = [{
+  name: "Amazing Leader",
   url: "https://docs.google.com/spreadsheets/d/1_Y4ULAmKR16-DSY3HxIwlSXR1aUL6DpC/edit?usp=drive_link"
 }, {
-  name: "Payslip · DCF Car Care",
+  name: "DCF Car Care",
   url: "https://docs.google.com/spreadsheets/d/120HPWEEIOQceWt7zVnwpmNWClYhdt400/edit?usp=drive_link"
 }, {
-  name: "Payslip · Elite Thrivers",
+  name: "Elite Thrivers",
   url: "https://docs.google.com/document/d/1yCL1KzH6_vC-KxeOKxIVBjlufJoo0_Np/edit?usp=drive_link"
 }, {
-  name: "Payslip · Subur Setiamas",
+  name: "Subur Setiamas",
   url: "https://docs.google.com/spreadsheets/d/1TTfeQFFkZDrf0_lcw3mvKb5vAsMBIA5R/edit?usp=drive_link"
 }, {
-  name: "Payslip · Swift Genius",
+  name: "Swift Genius",
   url: "https://docs.google.com/spreadsheets/d/1mYd50nx3d7e8jYtOzdcD59R1pvouXxFa/edit?usp=drive_link"
 }, {
-  name: "Payslip · Tereno",
+  name: "Tereno",
   url: "https://docs.google.com/spreadsheets/d/11Vt46xvwqo3cyqvE5DR2Tj35F2lUwWzn/edit?usp=drive_link"
 }, {
-  name: "Payslip · Turbo Solution",
+  name: "Turbo Solution",
   url: "https://docs.google.com/spreadsheets/d/1wW5whLSYsqXepJBcCvlFmtmIOuA0uXVM/edit?usp=drive_link"
 }];
+const OFFER_TOOLS = [];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const money = n => n ? "RM " + Number(n).toLocaleString() : "—";
 const num = n => "RM " + Number(n || 0).toLocaleString();
@@ -1914,7 +1929,7 @@ function CRM({ onLogout, currentUser }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [page, setPage] = useState("dashboard");
-  const [loanOpen, setLoanOpen] = useState(true);
+  const [openGroups, setOpenGroups] = useState({ loan: true, html: false });
   const [openId, setOpenId] = useState(null);
   const [showDue, setShowDue] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -2107,23 +2122,24 @@ function CRM({ onLogout, currentUser }) {
     if (n.children) {
       const Icon = n.icon;
       const childActive = n.children.some(c => c.id === page);
+      const isOpen = openGroups[n.id];
       return /*#__PURE__*/React.createElement("div", {
         key: n.id,
         style: { width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }
       },
       /*#__PURE__*/React.createElement("button", {
-        onClick: () => setLoanOpen(o => !o),
+        onClick: () => setOpenGroups(g => ({ ...g, [n.id]: !g[n.id] })),
         title: n.label,
         style: {
           ...S.navBtn,
-          ...(childActive && !loanOpen ? S.navActive : {})
+          ...(childActive && !isOpen ? S.navActive : {})
         }
       }, /*#__PURE__*/React.createElement(Icon, {
         size: 20
       }), /*#__PURE__*/React.createElement("span", {
         style: S.navLabel
-      }, n.label, " ", loanOpen ? "\u25B4" : "\u25BE")),
-      loanOpen && n.children.map(c => {
+      }, n.label, " ", isOpen ? "\u25B4" : "\u25BE")),
+      isOpen && n.children.map(c => {
         const CIcon = c.icon, cActive = page === c.id;
         return /*#__PURE__*/React.createElement("button", {
           key: c.id,
@@ -2216,7 +2232,16 @@ function CRM({ onLogout, currentUser }) {
     clients: clients,
     verifications: verifications,
     onSave: persistVerifications
-  }) : page === "html" ? /*#__PURE__*/React.createElement(HtmlToolsPage, null) : page === "banker" ? /*#__PURE__*/React.createElement(BankerPage, {
+  }) : page === "html_forms" ? /*#__PURE__*/React.createElement(LinkListPage, {
+    title: "Forms",
+    tools: FORMS_TOOLS
+  }) : page === "html_payslip" ? /*#__PURE__*/React.createElement(LinkListPage, {
+    title: "Payslip",
+    tools: PAYSLIP_TOOLS
+  }) : page === "html_offer" ? /*#__PURE__*/React.createElement(LinkListPage, {
+    title: "Offer Letter",
+    tools: OFFER_TOOLS
+  }) : page === "banker" ? /*#__PURE__*/React.createElement(BankerPage, {
     bankers: bankers,
     onSave: persistBankers
   }) : /*#__PURE__*/React.createElement(TypePage, {
@@ -2468,8 +2493,8 @@ function LinkListPage({
       gap: 14
     }
   }, tools.map(t => /*#__PURE__*/React.createElement("a", {
-    key: t.url,
-    href: t.url,
+    key: t.url || t.file,
+    href: t.url || t.file,
     target: "_blank",
     rel: "noopener",
     style: {
