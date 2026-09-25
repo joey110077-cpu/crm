@@ -702,7 +702,7 @@ const NAV = [{
     icon: Folder
   }, {
     id: "html_offer",
-    label: "Offer",
+    label: "CL",
     icon: Folder
   }]
 }, {
@@ -775,7 +775,37 @@ const PAYSLIP_TOOLS = [{
   name: "Veto Energy",
   url: "https://docs.google.com/spreadsheets/d/1e-oWooRc2rYpINsNLOXXeeCpB4ZO2jUI/copy"
 }];
-const OFFER_TOOLS = [];
+const OFFER_TOOLS = [{
+  name: "Kraftangan",
+  url: "https://drive.google.com/file/d/1m9KRh4BIwiYY9Z1z0iCcCZWIqrFKsNRC/view"
+}, {
+  name: "Multi Circuit Technology",
+  url: "https://docs.google.com/spreadsheets/d/1bRPrZn4hgiIX5_ih66oMahG7wC7dx9Hw/copy"
+}, {
+  name: "Subur Setiamas",
+  url: "https://docs.google.com/spreadsheets/d/1fBQha7tbkxUvVJ2wK7GDmOtTRkRM1Ds5/copy"
+}, {
+  name: "Swift Genius",
+  url: "https://docs.google.com/document/d/198UzqTgL3b-IVRUrfnhCBjdLI-nml_WP/copy"
+}, {
+  name: "Turbo Solutions",
+  url: "https://docs.google.com/spreadsheets/d/1OMhupWjt3AFTT37SVjGDmrYARciL0jzm/copy"
+}, {
+  name: "Ocelot",
+  url: "https://docs.google.com/spreadsheets/d/1LN3RPWG45lexVIex7Cd4akvwpMGfET8e/copy"
+}, {
+  name: "DCF MJL",
+  url: "https://docs.google.com/spreadsheets/d/1h3TFeiADoba4pHBVIWV00Qwolz9u0ZAx/copy"
+}, {
+  name: "GM Toy",
+  url: "https://docs.google.com/spreadsheets/d/1XRKYWq6FCcCF7dv_su0w6D7zclN_reeb/copy"
+}, {
+  name: "Tereno Energy",
+  url: "https://drive.google.com/file/d/19Vb3bt0VraFV3CD5eo1AZ3CC4oH1GdPK/view"
+}, {
+  name: "Veto",
+  url: "https://docs.google.com/spreadsheets/d/1Suj-7uwvkqtvaBfzw-3m-mT2ckgphAR0/copy"
+}];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const money = n => n ? "RM " + Number(n).toLocaleString() : "—";
 const num = n => "RM " + Number(n || 0).toLocaleString();
@@ -2254,7 +2284,7 @@ function CRM({ onLogout, currentUser }) {
     title: "Payslip",
     tools: PAYSLIP_TOOLS
   }) : page === "html_offer" ? /*#__PURE__*/React.createElement(LinkListPage, {
-    title: "Offer Letter",
+    title: "Confirmation Letter",
     tools: OFFER_TOOLS
   }) : page === "banker" ? /*#__PURE__*/React.createElement(BankerPage, {
     bankers: bankers,
